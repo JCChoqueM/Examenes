@@ -1,0 +1,2472 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>ELT-001 Legislación Informática — Examen Interactivo</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0e1a;
+        --bg2: #111827;
+        --bg3: #1a2236;
+        --border: #1f2e4a;
+        --accent: #3b82f6;
+        --accent2: #60a5fa;
+        --accent-glow: rgba(59, 130, 246, 0.18);
+        --correct: #22c55e;
+        --wrong: #ef4444;
+        --warn: #f59e0b;
+        --text: #e2e8f0;
+        --text-muted: #64748b;
+        --text-soft: #94a3b8;
+        --radius: 14px;
+        --header-bg1: #0d1526;
+        --header-bg2: #0a0e1a;
+      }
+
+      [data-theme='light'] {
+        --bg: #f5f0eb;
+        --bg2: #faf7f4;
+        --bg3: #ede8e2;
+        --border: #d9d0c7;
+        --accent: #3b6fd4;
+        --accent2: #5585e0;
+        --accent-glow: rgba(59, 111, 212, 0.1);
+        --correct: #2d7a4f;
+        --wrong: #c0392b;
+        --warn: #b97a1a;
+        --text: #0f0c0a;
+        --text-muted: #5c524a;
+        --text-soft: #3a302a;
+        --header-bg1: #ede8e2;
+        --header-bg2: #f5f0eb;
+      }
+
+      [data-theme='eye'] {
+        --bg: #0d1f0f;
+        --bg2: #122614;
+        --bg3: #172e1a;
+        --border: #1e4022;
+        --accent: #4ade80;
+        --accent2: #86efac;
+        --accent-glow: rgba(74, 222, 128, 0.12);
+        --correct: #4ade80;
+        --wrong: #f87171;
+        --warn: #fbbf24;
+        --text: #d1fae5;
+        --text-muted: #4b7a55;
+        --text-soft: #6fb87a;
+        --header-bg1: #091409;
+        --header-bg2: #0d1f0f;
+      }
+      /* ─── BOTÓN IR ARRIBA ─── */
+      #btn-top {
+        position: fixed;
+        bottom: 30px;
+        right: 24px;
+        z-index: 999;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 999px;
+        padding: 11px 20px;
+        font-family: 'Syne', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.45);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        transition: all 0.22s;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(12px);
+      }
+      #btn-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+      #btn-top:hover {
+        background: var(--accent2);
+        box-shadow: 0 6px 28px rgba(59, 130, 246, 0.6);
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        background: var(--bg2);
+        border: 1.5px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text-soft);
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 0.05em;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* ─── HERO HEADER ─── */
+      header {
+        position: relative;
+        padding: 52px 24px 40px;
+        text-align: center;
+        overflow: hidden;
+        background: linear-gradient(160deg, var(--header-bg1) 0%, var(--header-bg2) 100%);
+        border-bottom: 1px solid var(--border);
+      }
+      header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 60% at 50% -10%, rgba(59, 130, 246, 0.22) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .badge {
+        display: inline-block;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        color: var(--accent2);
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        padding: 4px 14px;
+        border-radius: 999px;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: clamp(26px, 5vw, 44px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        font-size: 14px;
+        color: var(--text-soft);
+        font-weight: 300;
+      }
+
+      /* ─── MATERIA SELECTOR ─── */
+      .materia-bar {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        padding: 26px 24px 4px;
+        flex-wrap: wrap;
+      }
+      .materia-btn {
+        font-family: 'Syne', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 12px 26px;
+        border-radius: 12px;
+        border: 1.5px solid var(--border);
+        background: var(--bg2);
+        color: var(--text-soft);
+        cursor: pointer;
+        transition: all 0.22s;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .materia-btn .materia-icon {
+        font-size: 16px;
+      }
+      .materia-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent2);
+        transform: translateY(-1px);
+      }
+      .materia-btn.active {
+        background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 24px rgba(124, 58, 237, 0.35);
+      }
+      .materia-hint {
+        text-align: center;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      /* ─── MODO SELECTOR ─── */
+      .mode-bar {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 22px 24px;
+        flex-wrap: wrap;
+      }
+      .mode-btn {
+        font-family: 'Syne', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 9px 22px;
+        border-radius: 999px;
+        border: 1.5px solid var(--border);
+        background: var(--bg2);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.22s;
+        letter-spacing: 0.04em;
+      }
+      .mode-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+      .mode-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.35);
+      }
+
+      /* ─── TEMA FILTER ─── */
+      .tema-filter {
+        display: flex;
+        gap: 8px;
+        padding: 0 24px 18px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .tema-chip {
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        padding: 5px 13px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .tema-chip:hover {
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+      .tema-chip.active {
+        background: var(--accent-glow);
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+
+      /* ─── SECCIÓN FILTER (sub-nivel dentro de un TEMA) ─── */
+      .seccion-filter {
+        display: none;
+        gap: 7px;
+        padding: 0 24px 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .seccion-chip {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 11.5px;
+        font-weight: 500;
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px dashed var(--border);
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .seccion-chip:hover {
+        border-color: #a78bfa;
+        color: #c4b5fd;
+      }
+      .seccion-chip.active {
+        background: rgba(167, 139, 250, 0.14);
+        border-color: #a78bfa;
+        border-style: solid;
+        color: #c4b5fd;
+      }
+
+      /* ─── STATS BAR ─── */
+      .stats-bar {
+        display: flex;
+        gap: 14px;
+        padding: 0 24px 24px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 20px;
+        text-align: center;
+        min-width: 90px;
+      }
+      .stat-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--accent2);
+        line-height: 1;
+      }
+      .stat-lbl {
+        font-size: 10px;
+        color: var(--text-muted);
+        margin-top: 3px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-family: 'DM Mono', monospace;
+      }
+
+      /* ─── QUESTIONS ─── */
+      .questions-wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 20px 80px;
+      }
+
+      .question-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+        margin-bottom: 18px;
+        transition: border-color 0.2s;
+      }
+      .question-card:hover {
+        border-color: #2d4070;
+      }
+      .question-card.initial-load {
+        animation: fadeSlide 0.25s ease both;
+      }
+
+      @keyframes fadeSlide {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .q-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .q-num {
+        flex-shrink: 0;
+        font-family: 'DM Mono', monospace;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--accent);
+        background: var(--accent-glow);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        padding: 4px 10px;
+        border-radius: 6px;
+        letter-spacing: 0.08em;
+        margin-top: 2px;
+      }
+      .q-tema-tag {
+        font-family: 'DM Mono', monospace;
+        font-size: 10px;
+        color: var(--text-muted);
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        padding: 3px 9px;
+        border-radius: 5px;
+        letter-spacing: 0.06em;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .q-seccion-tag {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 10.5px;
+        font-weight: 500;
+        color: #c4b5fd;
+        background: rgba(167, 139, 250, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        padding: 3px 9px;
+        border-radius: 5px;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .q-text {
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.65;
+        color: var(--text);
+        flex: 1;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+      }
+      .opt {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        background: var(--bg3);
+        cursor: pointer;
+        transition: all 0.18s;
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--text-soft);
+        user-select: none;
+      }
+      .opt:hover:not(.disabled) {
+        border-color: var(--accent);
+        background: var(--accent-glow);
+        color: var(--text);
+      }
+      .opt-letter {
+        font-family: 'DM Mono', monospace;
+        font-size: 12px;
+        font-weight: 500;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        flex-shrink: 0;
+        color: var(--text-muted);
+        margin-top: 1px;
+        transition: all 0.18s;
+      }
+
+      /* Coloca la marca (✓ / ✗) dentro del mismo cuadro de opción */
+      .opt {
+        position: relative;
+        padding-right: 48px;
+      }
+      .opt-mark {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: 'DM Mono', monospace;
+        font-size: 16px;
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: var(--text-soft);
+        transition: all 0.15s;
+      }
+      .opt.correct .opt-mark {
+        background: var(--correct);
+        color: #fff;
+      }
+      .opt.wrong .opt-mark {
+        background: var(--wrong);
+        color: #fff;
+      }
+      .opt.show-correct .opt-mark {
+        background: rgba(34, 197, 94, 0.08);
+        color: var(--correct);
+      }
+
+      /* States */
+      .opt.selected {
+        border-color: var(--accent);
+        background: var(--accent-glow);
+        color: var(--text);
+      }
+      .opt.selected .opt-letter {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .opt.correct {
+        border-color: var(--correct);
+        background: rgba(34, 197, 94, 0.1);
+        color: #86efac;
+      }
+      .opt.correct .opt-letter {
+        background: var(--correct);
+        border-color: var(--correct);
+        color: #fff;
+      }
+
+      .opt.wrong {
+        border-color: var(--wrong);
+        background: rgba(239, 68, 68, 0.1);
+        color: #fca5a5;
+      }
+      .opt.wrong .opt-letter {
+        background: var(--wrong);
+        border-color: var(--wrong);
+        color: #fff;
+      }
+
+      .opt.show-correct {
+        border-color: var(--correct);
+        background: rgba(34, 197, 94, 0.06);
+      }
+      .opt.disabled {
+        cursor: default;
+      }
+
+      /* ─── FEEDBACK ─── */
+      .feedback {
+        margin-top: 14px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: 'DM Mono', monospace;
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      .feedback.ok {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        color: #86efac;
+        display: flex;
+      }
+      .feedback.bad {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        display: flex;
+      }
+
+      /* ─── ACTIONS ─── */
+      .actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        padding: 24px 24px 0;
+        flex-wrap: wrap;
+        max-width: 860px;
+        margin: 0 auto;
+      }
+      .btn {
+        font-family: 'Syne', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 12px 28px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.03em;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 0 24px rgba(59, 130, 246, 0.3);
+      }
+      .btn-primary:hover {
+        background: #2563eb;
+        box-shadow: 0 0 32px rgba(59, 130, 246, 0.5);
+      }
+      .btn-ghost {
+        background: var(--bg2);
+        border: 1.5px solid var(--border);
+        color: var(--text-soft);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent2);
+      }
+
+      /* ─── RESULT PANEL ─── */
+      #result-panel {
+        display: none;
+        max-width: 600px;
+        margin: 30px auto;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 40px 36px;
+        text-align: center;
+      }
+      .result-score {
+        font-family: 'Syne', sans-serif;
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 1;
+        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+      .result-grade {
+        font-size: 16px;
+        color: var(--text-soft);
+        margin-bottom: 24px;
+      }
+      .result-bar-wrap {
+        background: var(--bg3);
+        border-radius: 999px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 32px;
+      }
+      .result-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent) 0%, #a78bfa 100%);
+        border-radius: 999px;
+        transition: width 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .result-breakdown {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+      .rb-item {
+        text-align: center;
+        background: var(--bg3);
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+      }
+      .rb-num {
+        font-family: 'Syne', sans-serif;
+        font-size: 28px;
+        font-weight: 800;
+      }
+      .rb-lbl {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 0.08em;
+      }
+      .rb-num.c {
+        color: var(--correct);
+      }
+      .rb-num.w {
+        color: var(--wrong);
+      }
+      .rb-num.s {
+        color: var(--warn);
+      }
+
+      /* ─── PROGRESS ─── */
+      .progress-wrap {
+        max-width: 860px;
+        margin: 0 auto 8px;
+        padding: 0 20px;
+      }
+      .progress-track {
+        background: var(--bg3);
+        height: 4px;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #a78bfa);
+        border-radius: 999px;
+        transition: width 0.3s ease;
+      }
+
+      /* ─── EMPTY STATE ─── */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-muted);
+        font-family: 'DM Mono', monospace;
+        font-size: 13px;
+      }
+
+      /* ─── SCROLLBAR ─── */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      @media (max-width: 600px) {
+        .question-card {
+          padding: 18px 16px;
+        }
+        .q-header {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <button
+        class="theme-toggle"
+        onclick="toggleTheme()"
+        id="theme-btn"
+      >
+        ☀️ Claro
+      </button>
+      <div class="badge" id="page-badge">ELT-001 · ELECTIVA I</div>
+      <h1 id="page-title">Legislación Informática</h1>
+      <p class="subtitle" id="page-subtitle">Examen Interactivo — Universidad / Derecho Digital Bolivia</p>
+    </header>
+
+    <div class="materia-hint">Selecciona una materia</div>
+    <div class="materia-bar" id="materia-bar"></div>
+
+    <div class="mode-bar">
+      <button
+        class="mode-btn active"
+        onclick="setMode('practice')"
+      >
+        🎯 Práctica
+      </button>
+      <button
+        class="mode-btn"
+        onclick="setMode('exam')"
+      >
+        📝 Examen
+      </button>
+      <button
+        class="mode-btn"
+        onclick="setMode('review')"
+      >
+        👁 Repaso
+      </button>
+    </div>
+
+    <div
+      class="tema-filter"
+      id="tema-filter"
+    ></div>
+
+    <div
+      class="seccion-filter"
+      id="seccion-filter"
+    ></div>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div
+          class="stat-num"
+          id="stat-total"
+        >
+          0
+        </div>
+        <div class="stat-lbl">Preguntas</div>
+      </div>
+      <div class="stat-card">
+        <div
+          class="stat-num"
+          id="stat-answered"
+        >
+          0
+        </div>
+        <div class="stat-lbl">Respondidas</div>
+      </div>
+      <div class="stat-card">
+        <div
+          class="stat-num"
+          id="stat-correct"
+          style="color: var(--correct)"
+        >
+          0
+        </div>
+        <div class="stat-lbl">Correctas</div>
+      </div>
+      <div class="stat-card">
+        <div
+          class="stat-num"
+          id="stat-wrong"
+          style="color: var(--wrong)"
+        >
+          0
+        </div>
+        <div class="stat-lbl">Incorrectas</div>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          id="progress-fill"
+          style="width: 0%"
+        ></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        class="btn btn-primary"
+        onclick="submitExam()"
+        id="btn-submit"
+        style="display: none"
+      >
+        Ver Resultados
+      </button>
+      <button
+        class="btn btn-ghost"
+        onclick="shuffleQuestions()"
+      >
+        🔀 Aleatorio
+      </button>
+      <button
+        class="btn btn-ghost"
+        onclick="resetAll()"
+      >
+        ↺ Reiniciar
+      </button>
+    </div>
+
+    <div id="result-panel">
+      <div
+        class="result-score"
+        id="r-score"
+      >
+        —
+      </div>
+      <div
+        class="result-grade"
+        id="r-grade"
+      ></div>
+      <div class="result-bar-wrap">
+        <div
+          class="result-bar-fill"
+          id="r-bar"
+          style="width: 0%"
+        ></div>
+      </div>
+      <div class="result-breakdown">
+        <div class="rb-item">
+          <div
+            class="rb-num c"
+            id="r-correct"
+          >
+            0
+          </div>
+          <div class="rb-lbl">Correctas</div>
+        </div>
+        <div class="rb-item">
+          <div
+            class="rb-num w"
+            id="r-wrong"
+          >
+            0
+          </div>
+          <div class="rb-lbl">Incorrectas</div>
+        </div>
+        <div class="rb-item">
+          <div
+            class="rb-num s"
+            id="r-skipped"
+          >
+            0
+          </div>
+          <div class="rb-lbl">Sin responder</div>
+        </div>
+      </div>
+      <button
+        class="btn btn-primary"
+        onclick="resetAll()"
+      >
+        Volver a Intentar
+      </button>
+    </div>
+
+    <div
+      class="questions-wrap"
+      id="questions-wrap"
+    ></div>
+
+    <!-- Botón flotante ir arriba -->
+    <button id="btn-top" title="Ir al inicio">
+      ↑ Inicio
+    </button>
+
+    <script>
+      const LEGISLACION_TEMAS = ['TODOS', 'TEMA I', 'TEMA II', 'TEMA III', 'TEMA IV', 'TEMA V'];
+
+      const ALL_QUESTIONS = [
+        // ── PARCIAL (7 preguntas únicas) ──
+        {
+          id: 'p1',
+          tema: 'TEMA V',
+          text: 'Los derechos de las personas y la informática, conocidos como:',
+          opts: ['derechos informáticos', 'derecho privado', 'Derecho Personal', 'derechos digitales'],
+          answer: 3,
+        },
+        {
+          id: 'p2',
+          tema: 'TEMA V',
+          text: 'Los Derechos Humanos no pueden ser:',
+          opts: ['Cedidos', 'Imprescriptibles', 'Esporádicos', 'Universales'],
+          answer: 0,
+        },
+        {
+          id: 'p4',
+          tema: 'TEMA V',
+          text: 'De acuerdo a la jurisprudencia se toma en cuenta que el derecho a la privacidad tiene dos sentidos:',
+          opts: [
+            'El primero conocido como el sentido natural y el segundo como el sentido negativo.',
+            'El primero conocido como el sentido positivo y el segundo como el sentido universal.',
+            'El primero conocido como el sentido positivo y el segundo como el sentido negativo.',
+            'El primero conocido como el sentido natural y el segundo como el sentido positivo.',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'p5',
+          tema: 'TEMA V',
+          text: 'Para los países que siguen las estructuras básicas del sistema continental romanista, la Ley es considerada como una:',
+          opts: ['Costumbre', 'Fuente', 'Norma', 'Jurisprudencia'],
+          answer: 1,
+        },
+        {
+          id: 'p6',
+          tema: 'TEMA V',
+          text: 'La doctrina para Manuel Ossorio dice:',
+          opts: [
+            'Conjunto de normas de los tratadistas y estudiosos de las leyes que explican y fijan el sentido de las leyes o sugieren soluciones para cuestiones aún no legisladas.',
+            'Conjunto de Leyes y opiniones de los tratadistas y estudiosos que explican y fijan el sentido y sugieren soluciones para cuestiones aún no legisladas.',
+            'Conjunto de tesis y opiniones de los tratadistas y estudiosos del derecho que explican y fijan el sentido de las leyes o sugieren soluciones para cuestiones aún no legisladas.',
+            'Conjunto de normas y leyes de los tratadistas y estudiosos del derecho que explican y fijan el sentido positivo del derecho.',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'p7',
+          tema: 'TEMA V',
+          text: 'El Dr. Marcelo Fernández dice que en el Derecho Informático existen dos tipos de fuentes que son:',
+          opts: [
+            'Fuentes Interdisciplinarias y Fuentes Transdisciplinarias',
+            'Fuentes la costumbre y Fuentes Jurisprudencia',
+            'Fuentes Primarias y Fuentes Secundarias',
+            'Fuentes Nacionales y Fuentes Internacionales',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'p10',
+          tema: 'TEMA I',
+          text: 'Se podría definir el delito informático como:',
+          opts: [
+            'toda acción (acción u omisión) no culpable realizada por un ser humano, que cause un perjuicio a personas sin que necesariamente se beneficie el autor',
+            'toda acción (acción u omisión) culpable realizada por un ser humano, que cause un perjuicio a personas sin que necesariamente se beneficie el autor',
+            'toda acción (acción u omisión) culpable realizada por un delincuente, que cause o no un perjuicio a la sociedad sin que necesariamente se beneficie el autor',
+            'toda acción (acción u omisión) realizada por un ciudadano, que cause un perjuicio a personas sin que necesariamente se beneficie el autor',
+          ],
+          answer: 0,
+        },
+
+        // ── EXAMEN 50 PREGUNTAS ──
+        {
+          id: 'e1',
+          tema: 'TEMA I',
+          text: 'El Artículo 363 ter del Código Penal boliviano tipifica delitos relacionados con:',
+          opts: [
+            'La manipulación informática para beneficio económico indebido',
+            'La alteración, acceso y uso indebido de datos informáticos',
+            'El fraude electrónico y la estafa en redes sociales',
+            'La interceptación ilegal de comunicaciones privadas',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e2',
+          tema: 'TEMA I',
+          text: "La 'alteración de datos' según el Art. 363 ter implica:",
+          opts: [
+            'La obtención no autorizada de información de un sistema',
+            'El acceso sin permiso a sistemas informáticos de terceros',
+            'La modificación, supresión o deterioro intencional de datos informáticos',
+            'La publicación de datos personales sin consentimiento',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e3',
+          tema: 'TEMA I',
+          text: "El 'acceso indebido a datos' consiste en:",
+          opts: [
+            'La modificación de registros en bases de datos gubernamentales',
+            'La obtención, copia o sustracción no autorizada de información contenida en un sistema',
+            'La instalación de software malicioso en equipos ajenos',
+            'La interceptación de comunicaciones en redes públicas',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e4',
+          tema: 'TEMA I',
+          text: "Una 'violación de datos' o brecha de datos ocurre cuando datos sensibles son copiados, transmitidos o utilizados por:",
+          opts: [
+            'Un funcionario público sin orden judicial',
+            'Un proveedor de servicios con contrato vencido',
+            'Una persona no autorizada',
+            'Un tercero con acceso parcial al sistema',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e5',
+          tema: 'TEMA I',
+          text: 'La doctrina jurídica en protección de datos informáticos enfatiza tres principios: confidencialidad, integridad y:',
+          opts: ['Universalidad', 'Proporcionalidad', 'Disponibilidad', 'Territorialidad'],
+          answer: 2,
+        },
+        {
+          id: 'e6',
+          tema: 'TEMA I',
+          text: "Un ejemplo claro de 'acceso indebido a datos' es:",
+          opts: [
+            'Modificar calificaciones en un sistema académico',
+            'Descargar ilegalmente bases de datos con números de tarjetas de crédito',
+            'Borrar registros contables de una empresa',
+            'Instalar un programa espía en un dispositivo ajeno',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e7',
+          tema: 'TEMA I',
+          text: 'Los bienes jurídicos que el Art. 363 ter busca proteger son:',
+          opts: [
+            'El patrimonio económico y la propiedad intelectual',
+            'La confidencialidad, integridad y disponibilidad de la información digital',
+            'La libertad de expresión y el acceso libre a la información',
+            'La seguridad nacional y los sistemas de defensa estatal',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e8',
+          tema: 'TEMA I',
+          text: 'Según la doctrina boliviana, el delito del Art. 363 ter se diferencia del Art. 363 bis porque:',
+          opts: [
+            'El 363 ter requiere beneficio económico y el 363 bis no',
+            'El 363 bis sanciona la manipulación informática y el 363 ter el acceso, alteración y uso indebido de datos',
+            'El 363 ter aplica solo a personas jurídicas y el 363 bis a personas naturales',
+            'Ambos son idénticos, solo difieren en la pena aplicable',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e9',
+          tema: 'TEMA I',
+          text: "La 'integridad' como principio de protección de datos informáticos se refiere a:",
+          opts: [
+            'La accesibilidad de los datos cuando se los necesita',
+            'La protección contra accesos no autorizados externos',
+            'La precisión e inalterabilidad de los datos',
+            'La confidencialidad frente a terceros no autorizados',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e10',
+          tema: 'TEMA I',
+          text: 'Las consecuencias de una violación de datos pueden incluir:',
+          opts: [
+            'Únicamente perjuicios económicos al titular de los datos',
+            'Solo daño a la reputación pública de empresas involucradas',
+            'Perjuicios económicos, usurpación de identidad o exposición pública de información confidencial',
+            'Sanciones administrativas exclusivamente para el proveedor del sistema',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e11',
+          tema: 'TEMA II',
+          text: 'El Artículo 363 bis del Código Penal (Manipulación informática) sanciona con:',
+          opts: [
+            '6 meses a 3 años a quien altere datos con fines de engaño',
+            '1 a 5 años de reclusión a quien manipule datos para obtener beneficio indebido',
+            'Multa equivalente al daño causado más 2 años de reclusión',
+            '2 a 8 años a quien acceda ilegalmente a sistemas financieros',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e12',
+          tema: 'TEMA II',
+          text: 'El delito informático más reportado en Bolivia según estadísticas 2024-2026 es:',
+          opts: [
+            'Robo de identidad y venta de datos en la Dark Web',
+            'Fraude informático y estafas mediante phishing, ingeniería social y QR engañosos',
+            'Deepfakes y fake news con inteligencia artificial',
+            'Manipulación de sistemas municipales para evasión de impuestos',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e13',
+          tema: 'TEMA II',
+          text: 'El grupo más propenso a sufrir fraudes y acoso digital en Bolivia es:',
+          opts: [
+            'Personas mayores de 50 años con cuentas bancarias activas',
+            'Niños menores de 12 años con acceso a videojuegos en línea',
+            'Jóvenes de 16 a 35 años, siendo las mujeres el grupo más afectado',
+            'Adultos entre 36 y 50 años con acceso a banca digital',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e14',
+          tema: 'TEMA II',
+          text: "El 'grooming' en el contexto de delitos informáticos en Bolivia se refiere a:",
+          opts: [
+            'El robo de identidad digital de personas adultas en redes sociales',
+            'El acoso e incremento de violencia sexual a menores en redes sociales',
+            'La distribución de malware a través de mensajes de correo electrónico',
+            'La suplantación de identidad de funcionarios para obtener datos confidenciales',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e15',
+          tema: 'TEMA II',
+          text: "Los 'deepfakes' como delito informático consisten en:",
+          opts: [
+            'La clonación de tarjetas bancarias mediante dispositivos físicos',
+            'El acceso no autorizado a cámaras de vigilancia privadas',
+            'El uso de inteligencia artificial para suplantar figuras públicas y promover engaños',
+            'La creación de perfiles falsos en redes sociales para estafar',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e16',
+          tema: 'TEMA II',
+          text: 'Un desafío principal en la persecución de delitos informáticos en Bolivia es:',
+          opts: [
+            'La falta de denuncias porque los delitos son considerados menores',
+            'La alta impunidad por falta de pruebas o anonimato de los autores, y dificultad de jurisdicción cuando los servidores están en el extranjero',
+            'La inexistencia de tipos penales específicos en el Código Penal',
+            'La oposición de empresas tecnológicas a colaborar con la justicia boliviana',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e17',
+          tema: 'TEMA II',
+          text: 'La Ley 164 de Telecomunicaciones junto al Art. 363 ter del Código Penal forman parte del marco normativo para:',
+          opts: [
+            'Regular el comercio electrónico y la firma digital en Bolivia',
+            'Sancionar delitos contra la integridad sexual de menores en entornos digitales',
+            'Proteger sistemas informáticos y datos digitales de accesos no autorizados',
+            'Establecer derechos de autor sobre software de desarrollo nacional',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e18',
+          tema: 'TEMA II',
+          text: 'El Código Niño, Niña y Adolescente en Bolivia, en relación al delito informático, regula específicamente:',
+          opts: [
+            'Las penas por manipulación de sistemas electorales con participación de menores',
+            'El acoso cibernético (cyberbullying) y delitos de contacto sexual con menores en entornos digitales',
+            'El acceso a internet de menores y la responsabilidad de los proveedores de servicio',
+            'La propiedad intelectual de contenidos creados por menores de edad en plataformas digitales',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e19',
+          tema: 'TEMA II',
+          text: '¿Por qué la Constitución Política del Estado (art. 21) es base de la legislación informática boliviana?',
+          opts: [
+            'Porque regula expresamente el uso de datos personales en plataformas digitales',
+            'Porque establece el habeas data como garantía autónoma de aplicación inmediata',
+            'Porque protege la privacidad e intimidad personal y familiar, fundamento constitucional de la protección de datos',
+            'Porque prohíbe toda forma de vigilancia electrónica por parte de entidades estatales',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e20',
+          tema: 'TEMA II',
+          text: 'El Ministerio Público de Bolivia ha registrado incremento en denuncias relacionadas con:',
+          opts: [
+            'Infracciones de derechos de autor en plataformas de streaming',
+            'Estafa, acceso indebido a sistemas, alteración y acceso indebido de datos',
+            'Violaciones de secreto profesional a través de medios digitales',
+            'Uso no autorizado de redes Wi-Fi públicas en centros urbanos',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e21',
+          tema: 'TEMA III',
+          text: 'La Ley N° 26.388 de Argentina (2008) es relevante en legislación comparada porque:',
+          opts: [
+            'Fue la primera ley latinoamericana exclusivamente sobre pornografía infantil digital',
+            'Es la base normativa más consolidada de la región, con aplicación judicial desde hace más de 15 años',
+            'Regula únicamente el acceso ilícito a sistemas bancarios y financieros',
+            'Tipifica exclusivamente los delitos de grooming y acoso cibernético',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e22',
+          tema: 'TEMA III',
+          text: 'El Artículo 153 bis del Código Penal Argentino (Ley 26.388) regula:',
+          opts: [
+            'La violación de correspondencia y comunicaciones electrónicas',
+            'El daño informático y la destrucción intencional de sistemas',
+            'El acceso ilícito a sistemas o datos informáticos de acceso restringido',
+            'La apropiación de datos personales y robo de identidad digital',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e23',
+          tema: 'TEMA III',
+          text: 'La sanción básica por acceso ilícito a sistemas informáticos en Argentina (Art. 153 bis CP) es:',
+          opts: ['6 meses a 2 años de prisión', '15 días a 6 meses de prisión', '1 a 3 años de reclusión', 'Multa más 30 días de arresto'],
+          answer: 1,
+        },
+        {
+          id: 'e24',
+          tema: 'TEMA III',
+          text: 'En Argentina, si el acceso ilícito informático se produce contra un organismo público o servicio financiero, la pena se agrava a:',
+          opts: ['6 meses a 2 años de prisión', '1 mes a 1 año de prisión', '2 a 4 años de reclusión', '3 a 6 años de prisión'],
+          answer: 1,
+        },
+        {
+          id: 'e25',
+          tema: 'TEMA III',
+          text: 'El Convenio de Budapest sobre Ciberdelincuencia es relevante en legislación comparada porque:',
+          opts: [
+            'Fue adoptado por Bolivia como norma de aplicación directa en 2015',
+            'Argentina lo tomó como referencia para elaborar la Ley 26.388 de reforma al Código Penal',
+            'Prohíbe a los países miembros tipificar el acceso sin daño como delito',
+            'Establece penas mínimas uniformes de 5 años para todos los delitos informáticos',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e26',
+          tema: 'TEMA III',
+          text: "Según la legislación argentina, la 'interceptación y violación de comunicaciones' (Arts. 153 y 155 CP) incluye:",
+          opts: [
+            'Solo el hackeo de cuentas de correo electrónico corporativas',
+            'Capturar, leer, grabar o desviar mensajes de WhatsApp, correos, llamadas o cualquier transmisión privada sin permiso',
+            'Exclusivamente la interceptación de comunicaciones telefónicas analógicas',
+            'Únicamente el acceso no autorizado a archivos almacenados en la nube',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e27',
+          tema: 'TEMA III',
+          text: 'La ventaja principal de la Ley 26.388 argentina frente a otras legislaciones regionales es que regula tanto:',
+          opts: [
+            'Delitos financieros digitales como delitos contra la propiedad intelectual',
+            'Ataques contra sistemas/datos como fraudes, delitos contra la intimidad y delitos sexuales en entornos digitales',
+            'Delitos cometidos por menores como delitos corporativos en el ciberespacio',
+            'Delitos nacionales como delitos transfronterizos con extradición automática',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e28',
+          tema: 'TEMA III',
+          text: "En la legislación comparada, la 'apropiación de datos' (Art. 157 bis CP argentino) se diferencia del 'acceso ilícito' porque:",
+          opts: [
+            'La apropiación requiere daño al sistema y el acceso no',
+            'El acceso ilícito implica solo ingresar al sistema, mientras la apropiación implica tomar los datos con fines de uso o divulgación',
+            'La apropiación de datos se aplica solo a personas jurídicas',
+            'No existe diferencia práctica, ambos artículos sancionan la misma conducta',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e29',
+          tema: 'TEMA III',
+          text: 'Un joven ingresa al sistema administrativo de una escuela privada y revisa listas de alumnos sin modificar ni llevarse información. Según la ley argentina, la sanción básica sería:',
+          opts: [
+            '30 días de arresto y multa',
+            'Archivo de la causa por no producir daño',
+            '3 meses de prisión (forma simple del Art. 153 bis)',
+            '1 año de prisión por violación de privacidad',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e30',
+          tema: 'TEMA III',
+          text: "En legislación comparada, la 'manipulación de sistemas' como el RUAT en Bolivia para evasión de impuestos se asemeja al tipo penal de:",
+          opts: [
+            'Estafa informática agravada por uso de sistemas públicos',
+            'Violación de correspondencia electrónica',
+            'Acceso ilícito a sistemas de organismos públicos con agravante',
+            'Interceptación de comunicaciones financieras',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e31',
+          tema: 'TEMA IV',
+          text: 'La Ley N° 1636 fue promulgada en Bolivia el:',
+          opts: ['21 de febrero de 2023', '10 de septiembre de 2025', '15 de enero de 2024', '6 de agosto de 2022'],
+          answer: 1,
+        },
+        {
+          id: 'e32',
+          tema: 'TEMA IV',
+          text: 'El objeto de la Ley N° 1636 (Art. 1) es:',
+          opts: [
+            'Regular el comercio electrónico y la protección de datos personales en Bolivia',
+            'Establecer un marco regulatorio para identificar, investigar y sancionar delitos contra la integridad sexual de NNA en entornos digitales',
+            'Crear el sistema nacional de ciberseguridad y protección de infraestructura crítica',
+            'Tipificar el acoso cibernético entre adultos como delito de acción pública',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e33',
+          tema: 'TEMA IV',
+          text: 'La finalidad de la Ley 1636 (Art. 2) es proteger a toda niña, niño o adolescente generando mecanismos de:',
+          opts: [
+            'Investigación, procesamiento, condena y reinserción de agresores',
+            'Prevención, protección, reparación y rehabilitación a las víctimas',
+            'Detección, denuncia, sanción y eliminación de contenidos digitales',
+            'Educación, sensibilización, capacitación y vigilancia digital',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e34',
+          tema: 'TEMA IV',
+          text: "Según el Art. 4 de la Ley 1636, 'Niñas, Niños y Adolescentes' son:",
+          opts: [
+            'Personas menores de 16 años de edad',
+            'Personas menores de 14 años según el Código NNA',
+            'Personas hasta el cumplimiento de los 18 años de edad',
+            'Personas menores de 21 años no emancipadas',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e35',
+          tema: 'TEMA IV',
+          text: "Los 'Entornos Digitales' según el Art. 4 de la Ley 1636 comprenden:",
+          opts: [
+            'Únicamente internet y redes sociales con registro de usuarios',
+            'Espacios de interacción a través de TIC, incluyendo internet, redes sociales, apps móviles, juegos en línea y plataformas virtuales',
+            'Solo los medios de comunicación electrónica con sede en Bolivia',
+            'Exclusivamente plataformas educativas virtuales autorizadas por el Estado',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e36',
+          tema: 'TEMA IV',
+          text: "El 'Acoso Sexual en Entornos Digitales' (Art. 4, num. 6 Ley 1636) se define como conducta reiterada de intimidación que tiene por objeto:",
+          opts: [
+            'Obtener datos personales o información bancaria de la víctima',
+            'Generar miedo, angustia o daño psicológico en la víctima',
+            'Difundir imágenes íntimas de la víctima sin consentimiento',
+            'Suplantar la identidad digital de una persona menor',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e37',
+          tema: 'TEMA IV',
+          text: 'La Ley 1636 establece penas de hasta cuántos años por producir o difundir material de abuso sexual infantil:',
+          opts: ['5 años', '10 años', '15 años', '20 años'],
+          answer: 3,
+        },
+        {
+          id: 'e38',
+          tema: 'TEMA IV',
+          text: 'El ámbito de aplicación de la Ley 1636 (Art. 3) alcanza a:',
+          opts: [
+            'Solo bolivianos residentes en territorio nacional',
+            'Todas las bolivianas y bolivianos o extranjeras y extranjeros que se encuentren en el territorio del Estado Plurinacional de Bolivia y lugares sometidos a su jurisdicción',
+            'Únicamente empresas de telecomunicaciones con sede en Bolivia',
+            'Solo personas que cometan delitos a través de plataformas digitales con servidores en Bolivia',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e39',
+          tema: 'TEMA IV',
+          text: "El 'Contenido Sexual' (Art. 4, num. 8 Ley 1636) es:",
+          opts: [
+            'Exclusivamente imágenes o videos con actos sexuales explícitos en internet',
+            'Toda representación, descripción, imagen, comunicación o material real o simulado que involucra conductas sexuales explícitas o partes íntimas con fines sexuales',
+            'Solo el material de abuso sexual infantil producido digitalmente',
+            'Los mensajes con contenido sexual entre personas mayores de edad',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e40',
+          tema: 'TEMA IV',
+          text: 'La Ley 1636 en cuanto a corresponsabilidad involucra en la protección de menores a:',
+          opts: [
+            'Únicamente al Estado y al Ministerio Público como entes persecutores',
+            'Solo a las plataformas digitales y proveedores de internet',
+            'Familias, instituciones educativas, empresas de comunicación y el Estado',
+            'Exclusivamente a los padres y tutores legales de las víctimas',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e41',
+          tema: 'TEMA V',
+          text: 'El Artículo 1 de la Constitución Política del Estado define a Bolivia como:',
+          opts: [
+            'Un Estado Federal Social de Derecho Democrático y Republicano',
+            'Un Estado Unitario Social de Derecho Plurinacional Comunitario, libre, independiente, soberano, democrático, intercultural, descentralizado y con autonomías',
+            'Una República Unitaria, Social y Democrática de Derecho',
+            'Un Estado Plurinacional Federal con autonomías regionales',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e42',
+          tema: 'TEMA V',
+          text: 'Los derechos reconocidos por la Constitución, según su Artículo 13 I, son:',
+          opts: ['transferibles', 'inviolables', 'Universales', 'de Cumplimiento obligatorio'],
+          answer: 1,
+        },
+        {
+          id: 'e43',
+          tema: 'TEMA V',
+          text: 'El Artículo 13 num. IV de la CPE dispone que los tratados y convenios internacionales ratificados por la Asamblea Legislativa Plurinacional que reconocen derechos humanos:',
+          opts: [
+            'Tienen rango inferior a la Constitución pero superior a las leyes ordinarias',
+            'Prevalecen en el orden interno y prohíben su limitación en los Estados de Excepción',
+            'Son de aplicación facultativa según criterio del Tribunal Constitucional',
+            'Solo son aplicables cuando el derecho interno no regule la materia',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e44',
+          tema: 'TEMA V',
+          text: 'La Acción de Protección de Privacidad (habeas data) NO procede para levantar:',
+          opts: [
+            'El secreto bancario',
+            'El secreto en materia de prensa',
+            'El secreto en materia de seguridad nacional',
+            'Toda clase de secreto profesional',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e45',
+          tema: 'TEMA V',
+          text: 'El Art. 17 del Pacto Internacional de Derechos Civiles y Políticos establece que:',
+          opts: [
+            'Nadie será objeto de maltratos arbitrarios en su trabajo privado ni de ataques a su honra',
+            'Nadie será objeto de injerencias arbitrarias o ilegales en su vida privada, familia, domicilio o correspondencia, ni de ataques ilegales a su honra y reputación',
+            'Nadie será objeto de injerencias en su familia, trabajo o domicilio sin orden judicial',
+            'Nadie será objeto de injerencias en su honra y reputación en casos no legislados',
+          ],
+          answer: 1,
+        },
+        {
+          id: 'e46',
+          tema: 'TEMA V',
+          text: 'Los derechos digitales son conocidos también como:',
+          opts: [
+            'Derechos privados digitales',
+            'Derechos personales informáticos',
+            'Derechos digitales de las personas',
+            'Derechos informáticos de los ciudadanos',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e47',
+          tema: 'TEMA V',
+          text: 'La Conferencia de Estocolmo de 1967 determinó aspectos prácticos de la privacidad que protegen a los individuos de:',
+          opts: [
+            'Ataques a su identidad y trabajo',
+            'Ataques a su familia y persona',
+            'Ataques en su honra o reputación',
+            'Ataques a su patrimonio económico',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e48',
+          tema: 'TEMA V',
+          text: 'Los datos públicos, a diferencia de los datos sensibles, son:',
+          opts: [
+            'Estado de salud y costumbres sexuales',
+            'Opiniones políticas y afiliación sindical',
+            'Nombre y domicilio de fácil obtención y a disposición de todos',
+            'Datos biométricos y registros genéticos',
+          ],
+          answer: 2,
+        },
+        {
+          id: 'e49',
+          tema: 'TEMA V',
+          text: 'El Artículo 8 de la CPE establece como principios ético-morales de la sociedad plural:',
+          opts: [
+            'Ama qhilla, Ama llulla, Ama suwa (no seas flojo, no seas mentiroso ni seas ladrón)',
+            'suma qamaña (vivir en paz), ñandereko (vida buena)',
+            'Ama qhilla, Ama llulla, Ama suwa (no seas flojo, no seas envidioso ni seas ladrón)',
+            'suma qamaña (vivir en armonía), ñandereko (vida noble)',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'e50',
+          tema: 'TEMA V',
+          text: 'Según Ossorio, el delito es definido como:',
+          opts: [
+            'Una acción típica, jurídica realizada por un ser humano, culpable y sancionada por una pena',
+            'Una omisión típica, antijurídica realizada por un ser humano, culpable y sancionada por una pena',
+            'Una acción típica, antijurídica realizada por un ser humano, culpable y sancionada por una pena',
+            'Una acción típica, antijurídica realizada por la sociedad y el ser humano, culpable y sancionada por una pena',
+          ],
+          answer: 2,
+        },
+      ];
+
+      // Remove duplicates by keeping unique text
+      const seen = new Set();
+      const LEGISLACION_QUESTIONS = ALL_QUESTIONS.filter((q) => {
+        const key = q.text.slice(0, 60);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
+      // ── MATERIA: INTELIGENCIA ARTIFICIAL ──
+      // Generado a partir de "IA para Ingenieros: Primeros Pasos" (Ing. Brian Peñafiel Plata, UNIOR)
+      const IA_TEMAS = ['TODOS', 'TEMA I'];
+      const IA_SECCIONES = [
+        'TODAS',
+        '¿Qué es la IA?',
+        '¿Cómo aprende la IA?',
+        'Herramientas y lenguajes',
+        'Proyecto primer modelo',
+        'Desafíos y ética',
+        'Actualidad',
+      ];
+
+      const IA_QUESTIONS = [
+        // ── TEMA I: ¿Qué es la IA? ──
+        {
+          id: 'ia1',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: '¿Cuáles son las tres capacidades principales que busca replicar la Inteligencia Artificial según su definición?',
+          opts: ['Aprender, razonar y tomar decisiones', 'Programar, compilar y ejecutar', 'Almacenar, indexar y buscar', 'Diseñar, fabricar y vender'],
+          answer: 0,
+        },
+        {
+          id: 'ia2',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: '¿Cuál de los siguientes es un ejemplo de IA Estrecha?',
+          opts: [
+            'Las recomendaciones de Netflix',
+            'Una IA con habilidades cognitivas humanas en cualquier contexto',
+            'Una IA capaz de superar la inteligencia humana',
+            'Un sistema con conciencia propia',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia3',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: 'La IA General se caracteriza por:',
+          opts: [
+            'Ser hipotética, con habilidades cognitivas humanas en cualquier contexto',
+            'Estar diseñada para tareas específicas como el streaming',
+            'Ser capaz de superar ampliamente la inteligencia humana',
+            'Ser el tipo de IA que usamos a diario',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia4',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: 'La IA Superinteligente se define como aquella capaz de:',
+          opts: [
+            'Superar la inteligencia humana, siendo objeto de debate ético y futurista',
+            'Realizar únicamente tareas específicas y acotadas',
+            'Aprender exclusivamente por refuerzo',
+            'Sustituir por completo el trabajo humano en la actualidad',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia5',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: "En el diagrama de Data Science, la intersección entre 'Math and Statistics' y 'Computer Science/IT' corresponde a:",
+          opts: ['Machine Learning', 'Applied Research', 'Ad Hoc Technical Solution', 'Domain Knowledge'],
+          answer: 0,
+        },
+        {
+          id: 'ia6',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: 'El nacimiento formal de la Inteligencia Artificial se sitúa en el año 1956 con:',
+          opts: ['La Conferencia de Dartmouth', 'El lanzamiento de Python', 'La creación de TensorFlow', 'El primer chatbot comercial'],
+          answer: 0,
+        },
+        {
+          id: 'ia7',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: "En la línea de tiempo de la IA, los 'Inviernos de la IA' se caracterizaron por:",
+          opts: [
+            'Crisis de financiación y expectativas',
+            'El auge por Big Data y la nube',
+            'Los primeros programas de ajedrez',
+            'El nacimiento de la IA en Dartmouth',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia8',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: 'El auge actual de la Inteligencia Artificial se explica principalmente por:',
+          opts: [
+            'El Big Data y la disponibilidad de la nube',
+            'La desaparición de los lenguajes de programación',
+            'La reducción del uso de datos',
+            'El abandono de las redes neuronales',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia9',
+          tema: 'TEMA I',
+          seccion: '¿Qué es la IA?',
+          text: "En el ciclo de vida de un sistema de IA, después de 'Datos de Entrenamiento' y 'Algoritmos' se obtiene:",
+          opts: ['Un Modelo Predictivo', 'Una base de datos relacional', 'Un informe contable', 'Una interfaz gráfica'],
+          answer: 0,
+        },
+
+        // ── TEMA II: ¿Cómo aprende la IA? ──
+        {
+          id: 'ia10',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: '¿Cuáles son los tres tipos principales de aprendizaje automático?',
+          opts: [
+            'Supervisado, No Supervisado y por Refuerzo',
+            'Lineal, No lineal y Cuántico',
+            'Rápido, Lento y Progresivo',
+            'Manual, Automático y Semiautomático',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia11',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'En el Aprendizaje Supervisado, el primer paso del proceso es:',
+          opts: ['Recolectar datos etiquetados', 'Seleccionar el algoritmo', 'Ajustar parámetros', 'Validar y probar'],
+          answer: 0,
+        },
+        {
+          id: 'ia12',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'Un ejemplo típico de Aprendizaje No Supervisado es:',
+          opts: [
+            'El agrupamiento (clustering) con K-means',
+            'La clasificación con etiquetas conocidas',
+            'El aprendizaje por refuerzo con recompensas',
+            'La propagación hacia atrás en redes neuronales',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia13',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'En el Aprendizaje por Refuerzo, los tres elementos clave del proceso son:',
+          opts: [
+            'Agente IA, Entorno y Recompensa',
+            'Dato, Algoritmo y Modelo',
+            'Python, NumPy y pandas',
+            'Entrenamiento, Predicción y Evaluación',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia14',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'El objetivo del Aprendizaje por Refuerzo es:',
+          opts: [
+            'Maximizar la recompensa acumulada a largo plazo',
+            'Minimizar la cantidad de datos utilizados',
+            'Eliminar por completo el error de entrenamiento',
+            'Reducir el número de neuronas de la red',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia15',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'Las redes neuronales artificiales se inspiran en:',
+          opts: ['Las neuronas biológicas del cerebro', 'Los circuitos eléctricos domésticos', 'Las bases de datos relacionales', 'Los sistemas operativos móviles'],
+          answer: 0,
+        },
+        {
+          id: 'ia16',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'El proceso mediante el cual una red neuronal ajusta sus pesos a partir del error se llama:',
+          opts: ['Propagación hacia atrás (Backpropagation)', 'Propagación hacia adelante (Forward pass)', 'Escalado de datos', 'Codificación One-Hot'],
+          answer: 0,
+        },
+        {
+          id: 'ia17',
+          tema: 'TEMA I',
+          seccion: '¿Cómo aprende la IA?',
+          text: 'Las funciones de activación en una red neuronal se caracterizan por ser:',
+          opts: ['No lineales', 'Siempre lineales', 'Exclusivas del aprendizaje supervisado', 'Innecesarias para el entrenamiento'],
+          answer: 0,
+        },
+
+        // ── TEMA III: Herramientas y lenguajes ──
+        {
+          id: 'ia18',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'El lenguaje de programación que domina el ecosistema de la IA es:',
+          opts: ['Python', 'Java', 'C++', 'PHP'],
+          answer: 0,
+        },
+        {
+          id: 'ia19',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'Para empezar con Python en IA se recomienda instalar:',
+          opts: ['Anaconda', 'Photoshop', 'AutoCAD', 'WordPress'],
+          answer: 0,
+        },
+        {
+          id: 'ia20',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'Jupyter Notebook es una herramienta clave porque permite:',
+          opts: [
+            'Ejecutar código por celdas y visualizar resultados interactivamente',
+            'Compilar programas en C++',
+            'Diseñar interfaces gráficas de escritorio',
+            'Administrar bases de datos relacionales',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia21',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'NumPy es una librería que proporciona principalmente:',
+          opts: [
+            'Arrays eficientes y operaciones vectorizadas',
+            'DataFrames para tablas de datos',
+            'Modelos de deep learning preentrenados',
+            'Visualización de gráficos interactivos',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia22',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'pandas es una librería utilizada principalmente para:',
+          opts: [
+            'Manipular tablas de datos mediante DataFrames',
+            'Entrenar redes neuronales profundas',
+            'Crear interfaces web',
+            'Gestionar servidores en la nube',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia23',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'Scikit-learn permite entrenar y evaluar modelos de:',
+          opts: [
+            'Clasificación, regresión y clustering',
+            'Únicamente redes neuronales convolucionales',
+            'Bases de datos distribuidas',
+            'Procesamiento de video en tiempo real',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia24',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'TensorFlow es un framework desarrollado por:',
+          opts: ['Google', 'Microsoft', 'Amazon', 'Apple'],
+          answer: 0,
+        },
+        {
+          id: 'ia25',
+          tema: 'TEMA I',
+          seccion: 'Herramientas y lenguajes',
+          text: 'Keras se caracteriza por ser:',
+          opts: [
+            'Una interfaz de alto nivel que simplifica la definición de modelos',
+            'Un lenguaje de programación de bajo nivel',
+            'Una base de datos NoSQL',
+            'Un sistema operativo para servidores',
+          ],
+          answer: 0,
+        },
+
+        // ── TEMA IV: Proyecto primer modelo ──
+        {
+          id: 'ia26',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'El primer paso en la planificación de un proyecto de IA es:',
+          opts: ['Definir el problema', 'Entrenar el modelo', 'Desplegar el sistema', 'Escalar los datos'],
+          answer: 0,
+        },
+        {
+          id: 'ia27',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'Para explorar un dataset con pandas, la función que muestra estadísticas descriptivas es:',
+          opts: ['df.describe()', 'df.corr()', 'df.hist()', 'df.info()'],
+          answer: 0,
+        },
+        {
+          id: 'ia28',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'La técnica utilizada para transformar variables categóricas en numéricas se llama:',
+          opts: ['One-Hot Encoding', 'StandardScaler', 'train_test_split', 'Backpropagation'],
+          answer: 0,
+        },
+        {
+          id: 'ia29',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'El escalado de variables numéricas mediante StandardScaler tiene como objetivo:',
+          opts: [
+            'Que las variables tengan la misma importancia',
+            'Eliminar variables categóricas',
+            'Aumentar el número de columnas',
+            'Reducir el tamaño del dataset',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia30',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'La función train_test_split se utiliza para:',
+          opts: [
+            'Separar los datos en conjuntos de entrenamiento y prueba',
+            'Entrenar el modelo final',
+            'Visualizar la distribución de variables',
+            'Codificar variables categóricas',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia31',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'Para ajustar (entrenar) un modelo en Scikit-learn se utiliza el método:',
+          opts: ['.fit(X_train, y_train)', '.predict(X_test)', '.score()', '.describe()'],
+          answer: 0,
+        },
+        {
+          id: 'ia32',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'Para generar predicciones sobre datos nuevos se utiliza el método:',
+          opts: ['.predict(X_test)', '.fit(X_train, y_train)', '.describe()', '.hist()'],
+          answer: 0,
+        },
+        {
+          id: 'ia33',
+          tema: 'TEMA I',
+          seccion: 'Proyecto primer modelo',
+          text: 'El coeficiente R² (coeficiente de determinación) indica:',
+          opts: [
+            'Qué proporción de la varianza en los datos es explicada por el modelo',
+            'El número total de datos del dataset',
+            'La velocidad de entrenamiento del modelo',
+            'El número de capas de una red neuronal',
+          ],
+          answer: 0,
+        },
+
+        // ── TEMA V: Desafíos y ética ──
+        {
+          id: 'ia34',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'El desafío del sesgo en IA ocurre porque los modelos:',
+          opts: [
+            'Aprenden de datos históricos que pueden reflejar discriminaciones',
+            'Nunca utilizan datos reales',
+            'Solo funcionan con datos sintéticos',
+            'No requieren de datos para entrenarse',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia35',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: "Las técnicas de 'fairness' en IA buscan:",
+          opts: [
+            'Construir sistemas de IA inclusivos y legales',
+            'Aumentar la velocidad de procesamiento',
+            'Reducir el tamaño de los modelos',
+            'Eliminar el uso de estadística',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia36',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'Un riesgo de privacidad en sistemas de IA son los llamados:',
+          opts: [
+            'Ataques de inferencia que reconstruyen información sensible',
+            'Errores de sintaxis en el código',
+            'Fallos de conexión a internet',
+            'Problemas de batería en dispositivos móviles',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia37',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'El Federated Learning es una solución de privacidad que permite:',
+          opts: [
+            'Entrenar modelos sin centralizar los datos',
+            'Centralizar todos los datos en un único servidor',
+            'Eliminar la necesidad de entrenar modelos',
+            'Aumentar la exposición de datos sensibles',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia38',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: "El principio de 'Privacy by Design' implica:",
+          opts: [
+            'Aplicar principios de privacidad desde el diseño del sistema',
+            'Aplicar la privacidad solo después de un incidente',
+            'Ignorar la privacidad en el desarrollo',
+            'Delegar la privacidad únicamente al usuario final',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia39',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'La Explicabilidad de la IA (XAI) busca principalmente:',
+          opts: [
+            'Que los usuarios y reguladores entiendan las decisiones de la IA',
+            'Aumentar la velocidad de los modelos',
+            'Reducir el número de datos necesarios',
+            'Ocultar el funcionamiento interno de los modelos',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia40',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'Herramientas como SHAP y LIME se utilizan para:',
+          opts: [
+            'Generar explicaciones locales sobre qué variables influyeron en una predicción',
+            'Entrenar redes neuronales más rápido',
+            'Recolectar datos de sensores IoT',
+            'Codificar variables categóricas',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia41',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'Respecto al futuro del trabajo, la automatización impulsada por IA:',
+          opts: [
+            'Desplaza empleos rutinarios pero crea nuevos roles en desarrollo y supervisión de IA',
+            'Elimina por completo la necesidad de trabajo humano',
+            'No afecta a ningún sector laboral',
+            'Solo afecta a los ingenieros de software',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia42',
+          tema: 'TEMA I',
+          seccion: 'Desafíos y ética',
+          text: 'La responsabilidad social frente a la IA implica considerar:',
+          opts: [
+            'El reskilling de los trabajadores y diseñar tecnología que amplifique capacidades humanas',
+            'Únicamente la reducción de costos empresariales',
+            'La eliminación total de la supervisión humana',
+            'El aumento de la brecha digital sin medidas correctivas',
+          ],
+          answer: 0,
+        },
+
+        // ── TEMA VI: Actualidad ──
+        {
+          id: 'ia43',
+          tema: 'TEMA I',
+          seccion: 'Actualidad',
+          text: 'La Visión por Computadora permite que las máquinas:',
+          opts: [
+            '"Vean", por ejemplo mediante reconocimiento de objetos',
+            '"Hablen", mediante chatbots y traducción',
+            '"Actúen", mediante control autónomo',
+            '"Escuchen", exclusivamente mediante reconocimiento de voz',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia44',
+          tema: 'TEMA I',
+          seccion: 'Actualidad',
+          text: 'El Procesamiento de Lenguaje Natural (PLN) permite que las máquinas:',
+          opts: [
+            '"Hablen": chatbots, traducción y análisis de sentimientos',
+            '"Vean": reconocimiento de objetos',
+            '"Actúen": automatización industrial',
+            '"Calculen": operaciones matemáticas avanzadas',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia45',
+          tema: 'TEMA I',
+          seccion: 'Actualidad',
+          text: 'Entre las competencias clave más allá del código para trabajar en IA se encuentran:',
+          opts: [
+            'Estadística, Storytelling, Trabajo en equipo y Ética',
+            'Solo dominar Python avanzado',
+            'Únicamente conocimientos de hardware',
+            'Solo experiencia en marketing digital',
+          ],
+          answer: 0,
+        },
+        {
+          id: 'ia46',
+          tema: 'TEMA I',
+          seccion: 'Actualidad',
+          text: 'Un ejemplo de proyecto de portafolio en IA mencionado es:',
+          opts: [
+            'Un Clasificador de Spam usando NLP y clasificación',
+            'Un sistema operativo desde cero',
+            'Una base de datos relacional compleja',
+            'Un servidor web estático',
+          ],
+          answer: 0,
+        },
+      ];
+
+      // ── REGISTRO DE MATERIAS (escalable a futuro) ──
+      const SUBJECTS = {
+        legislacion: {
+          key: 'legislacion',
+          icon: '⚖️',
+          label: 'Legislación Informática',
+          badge: 'ELT-001 · ELECTIVA I',
+          subtitle: 'Examen Interactivo — Universidad / Derecho Digital Bolivia',
+          temas: LEGISLACION_TEMAS,
+          secciones: null,
+          questions: LEGISLACION_QUESTIONS,
+        },
+        ia: {
+          key: 'ia',
+          icon: '🤖',
+          label: 'Inteligencia Artificial',
+          badge: 'IA · INGENIERÍA',
+          subtitle: 'Examen Interactivo — IA para Ingenieros: Primeros Pasos (UNIOR)',
+          temas: IA_TEMAS,
+          temaLabels: { 'TEMA I': 'TEMA I: IA para Ingenieros' },
+          secciones: IA_SECCIONES,
+          questions: IA_QUESTIONS,
+        },
+      };
+
+      let currentSubject = 'legislacion';
+      let mode = 'practice';
+      let activeTema = 'TODOS';
+      let activeSeccion = 'TODAS';
+      let userAnswers = {};
+      let examSubmitted = false;
+      let currentQuestions = [...SUBJECTS[currentSubject].questions];
+      let isInitialLoad = true;
+
+      function buildMateriaBar() {
+        const wrap = document.getElementById('materia-bar');
+        wrap.innerHTML = Object.values(SUBJECTS)
+          .map(
+            (s) =>
+              `<button class="materia-btn ${s.key === currentSubject ? 'active' : ''}" onclick="selectSubject('${s.key}')">
+                <span class="materia-icon">${s.icon}</span>${s.label}
+              </button>`,
+          )
+          .join('');
+      }
+
+      function selectSubject(key) {
+        if (!SUBJECTS[key]) return;
+        currentSubject = key;
+        const subject = SUBJECTS[currentSubject];
+
+        activeTema = 'TODOS';
+        activeSeccion = 'TODAS';
+        userAnswers = {};
+        examSubmitted = false;
+        currentQuestions = [...subject.questions];
+        isInitialLoad = true;
+        mode = 'practice';
+
+        document.getElementById('page-badge').textContent = subject.badge;
+        document.getElementById('page-title').textContent = subject.label;
+        document.getElementById('page-subtitle').textContent = subject.subtitle;
+        document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'none';
+        document.querySelectorAll('.mode-btn').forEach((b) => b.classList.remove('active'));
+        const firstModeBtn = document.querySelector('.mode-btn');
+        if (firstModeBtn) firstModeBtn.classList.add('active');
+
+        buildMateriaBar();
+        buildTemaFilter();
+        buildSeccionFilter();
+        renderQuestions();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function toggleTheme() {
+        const html = document.documentElement;
+        const btn = document.getElementById('theme-btn');
+        const current = html.getAttribute('data-theme');
+        if (!current) {
+          html.setAttribute('data-theme', 'light');
+          btn.textContent = '🌙 Oscuro';
+        } else if (current === 'light') {
+          html.setAttribute('data-theme', 'eye');
+          btn.textContent = '☀️ Claro';
+        } else {
+          html.removeAttribute('data-theme');
+          btn.textContent = '🌿 Ojos';
+        }
+      }
+
+      function setMode(m) {
+        mode = m;
+        examSubmitted = false;
+        userAnswers = {};
+        isInitialLoad = true;
+        document.querySelectorAll('.mode-btn').forEach((b) => b.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('btn-submit').style.display = m === 'exam' ? 'inline-block' : 'none';
+        document.getElementById('result-panel').style.display = 'none';
+        renderQuestions();
+      }
+
+      function buildTemaFilter() {
+        const wrap = document.getElementById('tema-filter');
+        const subject = SUBJECTS[currentSubject];
+        const temas = subject.temas;
+        const labels = subject.temaLabels || {};
+        wrap.innerHTML = temas
+          .map(
+            (t) =>
+              `<button class="tema-chip ${t === activeTema ? 'active' : ''}" onclick="filterTema('${t}')">${labels[t] || t}</button>`,
+          )
+          .join('');
+      }
+
+      function filterTema(t) {
+        activeTema = t;
+        activeSeccion = 'TODAS';
+        isInitialLoad = true;
+        buildTemaFilter();
+        buildSeccionFilter();
+        renderQuestions();
+      }
+
+      function buildSeccionFilter() {
+        const wrap = document.getElementById('seccion-filter');
+        const secciones = SUBJECTS[currentSubject].secciones;
+        if (!secciones) {
+          wrap.innerHTML = '';
+          wrap.style.display = 'none';
+          return;
+        }
+        wrap.style.display = 'flex';
+        wrap.innerHTML = secciones
+          .map(
+            (s) =>
+              `<button class="seccion-chip ${s === activeSeccion ? 'active' : ''}" onclick="filterSeccion('${s.replace(/'/g, "\\'")}')">${s}</button>`,
+          )
+          .join('');
+      }
+
+      function filterSeccion(s) {
+        activeSeccion = s;
+        isInitialLoad = true;
+        buildSeccionFilter();
+        renderQuestions();
+      }
+
+      function shuffleQuestions() {
+        currentQuestions = [...currentQuestions].sort(() => Math.random() - 0.5);
+        userAnswers = {};
+        examSubmitted = false;
+        isInitialLoad = true;
+        document.getElementById('result-panel').style.display = 'none';
+        renderQuestions();
+      }
+
+      function resetAll() {
+        userAnswers = {};
+        examSubmitted = false;
+        activeTema = 'TODOS';
+        activeSeccion = 'TODAS';
+        currentQuestions = [...SUBJECTS[currentSubject].questions];
+        isInitialLoad = true;
+        document.getElementById('result-panel').style.display = 'none';
+        buildTemaFilter();
+        buildSeccionFilter();
+        renderQuestions();
+      }
+
+      function getVisibleQuestions() {
+        let qs = activeTema === 'TODOS' ? currentQuestions : currentQuestions.filter((q) => q.tema === activeTema);
+        if (SUBJECTS[currentSubject].secciones && activeSeccion !== 'TODAS') {
+          qs = qs.filter((q) => q.seccion === activeSeccion);
+        }
+        return qs;
+      }
+
+      function renderQuestions() {
+        const wrap = document.getElementById('questions-wrap');
+        const qs = getVisibleQuestions();
+
+        document.getElementById('stat-total').textContent = qs.length;
+        updateStats(qs);
+
+        if (qs.length === 0) {
+          wrap.innerHTML = '<div class="empty-state">No hay preguntas para este filtro.</div>';
+          return;
+        }
+
+        const letters = ['a', 'b', 'c', 'd'];
+        wrap.innerHTML = qs
+          .map((q, qi) => {
+            const answered = userAnswers[q.id] !== undefined;
+            const userAns = userAnswers[q.id];
+            const isExamDone = mode === 'exam' && examSubmitted;
+            const showAnswer = mode === 'review' || isExamDone;
+
+            const opts = q.opts
+              .map((o, oi) => {
+                let cls = 'opt';
+                let mark = ''; // marca de bien/mal
+
+                if (mode === 'practice' && answered) {
+                  // En práctica: mostrar solo colores con marca dentro del cuadro
+                  if (oi === userAns && oi === q.answer) {
+                    cls += ' correct';
+                    mark = '<span class="opt-mark">✓</span>';
+                  } else if (oi === userAns && oi !== q.answer) {
+                    cls += ' wrong';
+                    mark = '<span class="opt-mark">✗</span>';
+                  } else if (oi === q.answer) cls += ' show-correct';
+                } else if (showAnswer) {
+                  cls += ' disabled';
+                  if (oi === userAns && oi === q.answer) {
+                    cls += ' correct';
+                    mark = '<span class="opt-mark">✓</span>';
+                  } else if (oi === userAns && oi !== q.answer) {
+                    cls += ' wrong';
+                    mark = '<span class="opt-mark">✗</span>';
+                  } else if (oi === q.answer) cls += ' show-correct';
+                } else if (answered && oi === userAns) {
+                  cls += ' selected';
+                }
+
+                // En práctica: permite reseleccionar. En examen: solo antes de enviar
+                const isClickable = mode === 'practice' || (mode === 'exam' && !examSubmitted);
+                const clickable = isClickable ? `onclick="answer('${q.id}', ${oi})"` : '';
+                return `<div class="${cls}" ${clickable}>
+        <span class="opt-letter">${letters[oi]}</span>
+        <span>${o}</span>
+        ${mark}
+      </div>`;
+              })
+              .join('');
+
+            let feedback = '';
+            // En práctica: no mostrar cuadro extra, las marcas aparecen dentro del propio cuadro
+            // En examen después de enviar: mostrar feedback completo
+            if (showAnswer && answered) {
+              const ok = userAns === q.answer;
+              feedback = `<div class="feedback ${ok ? 'ok' : 'bad'}">${ok ? '✓ Correcto' : `✗ Tu respuesta: (${letters[userAns]}) — Correcta: (${letters[q.answer]})`}</div>`;
+            }
+            if (mode === 'review') {
+              feedback = `<div class="feedback ok">✓ Respuesta: (${letters[q.answer]}) ${q.opts[q.answer]}</div>`;
+            }
+
+            const temaLabel = (SUBJECTS[currentSubject].temaLabels || {})[q.tema] || q.tema;
+            return `<div class="question-card${isInitialLoad ? ' initial-load' : ''}" id="qcard-${q.id}" style="animation-delay:${isInitialLoad ? qi * 0.03 : 0}s">
+      <div class="q-header">
+        <span class="q-num">#${qi + 1}</span>
+        <span class="q-tema-tag">${temaLabel}</span>
+        ${q.seccion ? `<span class="q-seccion-tag">${q.seccion}</span>` : ''}
+        <div class="q-text">${q.text}</div>
+      </div>
+      <div class="options">${opts}</div>
+      ${feedback}
+    </div>`;
+          })
+          .join('');
+      }
+
+      function answer(id, opt) {
+        // En modo examen: permite cambiar respuesta
+        // En modo práctica: bloquea después de responder
+        if (mode === 'practice' && userAnswers[id] !== undefined) return;
+        userAnswers[id] = opt;
+        isInitialLoad = false;
+        renderQuestions();
+      }
+
+      function updateStats(qs) {
+        const answered = qs.filter((q) => userAnswers[q.id] !== undefined).length;
+        const correct = qs.filter((q) => userAnswers[q.id] === q.answer).length;
+        const wrong = answered - correct;
+        document.getElementById('stat-answered').textContent = answered;
+        document.getElementById('stat-correct').textContent = correct;
+        document.getElementById('stat-wrong').textContent = wrong;
+        const pct = qs.length ? (answered / qs.length) * 100 : 0;
+        document.getElementById('progress-fill').style.width = pct + '%';
+      }
+
+      function submitExam() {
+        examSubmitted = true;
+        const qs = getVisibleQuestions();
+        const answered = qs.filter((q) => userAnswers[q.id] !== undefined).length;
+        const correct = qs.filter((q) => userAnswers[q.id] === q.answer).length;
+        const wrong = answered - correct;
+        const skipped = qs.length - answered;
+        const pct = Math.round((correct / qs.length) * 100);
+
+        let grade = '';
+        if (pct >= 90) grade = '🏆 Excelente — Sobresaliente';
+        else if (pct >= 70) grade = '✅ Aprobado';
+        else if (pct >= 50) grade = '⚠️ Necesitas reforzar los temas';
+        else grade = '❌ Reprueba — estudia más';
+
+        const panel = document.getElementById('result-panel');
+        panel.style.display = 'block';
+        document.getElementById('r-score').textContent = pct + '%';
+        document.getElementById('r-grade').textContent = grade;
+        document.getElementById('r-correct').textContent = correct;
+        document.getElementById('r-wrong').textContent = wrong;
+        document.getElementById('r-skipped').textContent = skipped;
+        setTimeout(() => {
+          document.getElementById('r-bar').style.width = pct + '%';
+        }, 100);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        renderQuestions();
+      }
+
+      // Botón ir arriba
+      const btnTop = document.getElementById('btn-top');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          btnTop.classList.add('visible');
+        } else {
+          btnTop.classList.remove('visible');
+        }
+      });
+      btnTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0 });
+      });
+
+      // Init
+      buildMateriaBar();
+      buildTemaFilter();
+      buildSeccionFilter();
+      renderQuestions();
+      isInitialLoad = false;
+    </script>
+  </body>
+</html>
