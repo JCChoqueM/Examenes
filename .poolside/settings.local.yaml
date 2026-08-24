@@ -1,0 +1,15 @@
+tools:
+    shell:
+        allow:
+            - find *
+            - head *
+            - cd *
+            - sed *
+            - echo *
+            - tail *
+            - grep *
+            - ls *
+            - wc *
+            - rm *
+            - node *
+            - cp *
