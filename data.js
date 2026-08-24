@@ -23,7 +23,7 @@
         },
       };
 
-      let currentSubject = 'legislacion';
+      let currentSubject = 'ia';
       let mode = 'practice';
       let activeTema = 'TODOS';
       let activeSeccion = 'TODAS';

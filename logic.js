@@ -290,8 +290,5 @@
       });
 
       // Init
-      buildMateriaBar();
-      buildTemaFilter();
-      buildSeccionFilter();
-      renderQuestions();
+      selectSubject(currentSubject);
       isInitialLoad = false;
