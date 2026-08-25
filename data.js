@@ -21,6 +21,17 @@
           secciones: IA_SECCIONES,
           questions: IA_QUESTIONS,
         },
+        redes: {
+          key: 'redes',
+          icon: '🌐',
+          label: 'Redes de Computadoras II',
+          badge: 'REDES · INFORMÁTICA',
+          subtitle: 'Examen Interactivo — Redes de Computadoras II: Conceptos Fundamentales',
+          temas: REDES_TEMAS,
+          temaLabels: { 'TEMA I': 'TEMA I: Redes de Computadoras II' },
+          secciones: REDES_SECCIONES,
+          questions: REDES_QUESTIONS,
+        },
       };
 
       let currentSubject = 'ia';
