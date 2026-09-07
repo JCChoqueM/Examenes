@@ -44,6 +44,9 @@
 // Si la materia ya fue registrada por otro examen, el bloque del meta se omite
 // (registro idempotente) y aquí solo se agrega este examen.
 
+// IIFE: cuerpo aislado — consts locales (reutilizable: se pueden reusar los mismos nombres de constante sin colisionar).
+(function () {
+"use strict";
 const MATE_GENERAL_QUESTIONS = [
   {
     "id": "mate1",
@@ -157,3 +160,5 @@ SUBJECTS.mate.exams.general = {
   label: "General",
   questions: MATE_GENERAL_QUESTIONS,
 };
+
+})();

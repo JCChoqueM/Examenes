@@ -44,6 +44,9 @@
 // Si la materia ya fue registrada por otro examen, el bloque del meta se omite
 // (registro idempotente) y aquí solo se agrega este examen.
 
+// IIFE: cuerpo aislado — consts locales (reutilizable: se pueden reusar los mismos nombres de constante sin colisionar).
+(function () {
+"use strict";
 const REDES_PARCIAL3_QUESTIONS = [
   {
     "id": "rp3-1",
@@ -408,3 +411,5 @@ SUBJECTS.redes.exams.parcial3 = {
   label: "Parcial 3",
   questions: REDES_PARCIAL3_QUESTIONS,
 };
+
+})();

@@ -44,6 +44,9 @@
 // Si la materia ya fue registrada por otro examen, el bloque del meta se omite
 // (registro idempotente) y aquí solo se agrega este examen.
 // Cargarlo (automáticamente) mediante: node tools/scan-materias.js
+// IIFE: cuerpo aislado — consts locales (reutilizable: se pueden reusar los mismos nombres de constante sin colisionar).
+(function () {
+"use strict";
 const TRIG_EXAMENFINAL_QUESTIONS = [
   {
     "id": "trig1",
@@ -225,3 +228,5 @@ SUBJECTS.trigonometria.exams.examenfinal = {
   label: "Examen Final",
   questions: TRIG_EXAMENFINAL_QUESTIONS,
 };
+
+})();

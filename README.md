@@ -68,40 +68,47 @@ Un solo archivo con las preguntas **+** el metadato de la materia (registro idem
 ```js
 // ── EXAMEN: Examen Final — Trigonometría ──
 // AUTO-CONTENIDO: define la materia (si no existía) y registra este examen.
-const TRIG_EXAMENFINAL_QUESTIONS = [
-  {
-    "id": "trig1",
-    "tema": "TEMA I",
-    "seccion": "Conceptos Fundamentales",
-    "text": "¿Cuál es el valor de sen(90°)?",
-    "opts": ["0", "1", "√2 / 2", "No definido"],
-    "answer": 1
+// ── Cuerpo aislado (IIFE): las constantes son locales al archivo, por lo que
+//    podés reutilizar los mismos nombres (ej. *_QUESTIONS) al copiar una
+//    materia sin pegar colisiones de 'const' entre <script>.
+(function () {
+  "use strict";
+
+  const TRIG_EXAMENFINAL_QUESTIONS = [
+    {
+      "id": "trig1",
+      "tema": "TEMA I",
+      "seccion": "Conceptos Fundamentales",
+      "text": "¿Cuál es el valor de sen(90°)?",
+      "opts": ["0", "1", "√2 / 2", "No definido"],
+      "answer": 1
+    }
+    // ...más preguntas
+  ];
+
+  // ── Metadatos de la materia (auto-registro idempotente) ──
+  // Meta integrado en este archivo: define la materia solo si aún no existe.
+  if (!SUBJECTS.trigonometria) {
+    SUBJECTS.trigonometria = {
+      key: 'trigonometria',
+      icon: "🔺",
+      label: "Trigonometría",
+      badge: "TRIG · CIENCIAS",
+      subtitle: "Examen Interactivo — Trigonometría: Conceptos, Identidades y Aplicaciones",
+      temas: ["TODOS", "TEMA I"],
+      temaLabels: { "TEMA I": "TEMA I: Trigonometría Básica, Identidades y Aplicaciones" },
+      secciones: ["TODAS", "Conceptos Fundamentales", "Identidades Trigonométricas", "Aplicaciones", "Resolución de Triángulos"],
+      exams: {},
+    };
   }
-  // ...más preguntas
-];
 
-// ── Metadatos de la materia (auto-registro idempotente) ──
-// Meta integrado en este archivo: define la materia solo si aún no existe.
-if (!SUBJECTS.trigonometria) {
-  SUBJECTS.trigonometria = {
-    key: 'trigonometria',
-    icon: "🔺",
-    label: "Trigonometría",
-    badge: "TRIG · CIENCIAS",
-    subtitle: "Examen Interactivo — Trigonometría: Conceptos, Identidades y Aplicaciones",
-    temas: ["TODOS", "TEMA I"],
-    temaLabels: { "TEMA I": "TEMA I: Trigonometría Básica, Identidades y Aplicaciones" },
-    secciones: ["TODAS", "Conceptos Fundamentales", "Identidades Trigonométricas", "Aplicaciones", "Resolución de Triángulos"],
-    exams: {},
+  // ── Registro del examen en SUBJECTS (auto-registro) ──
+  SUBJECTS.trigonometria.exams.examenfinal = {
+    key: 'examenfinal',
+    label: "Examen Final",
+    questions: TRIG_EXAMENFINAL_QUESTIONS,
   };
-}
-
-// ── Registro del examen en SUBJECTS (auto-registro) ──
-SUBJECTS.trigonometria.exams.examenfinal = {
-  key: 'examenfinal',
-  label: "Examen Final",
-  questions: TRIG_EXAMENFINAL_QUESTIONS,
-};
+})();
 ```
 
 **Reglas de formato de cada pregunta:**

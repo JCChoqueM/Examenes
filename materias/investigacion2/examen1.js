@@ -39,6 +39,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // ── EXAMEN: Examen 1 — Investigación Operativa ──
 // Archivo AUTOCONTENIDO: define la materia (si no existía) y registra este examen.
+// IIFE: cuerpo aislado — consts locales (reutilizable: se pueden reusar los mismos nombres de constante sin colisionar).
+(function () {
+"use strict";
 const INV_EXAMEN1_QUESTIONS = [
   {
     "id": "inv1-1",
@@ -223,3 +226,5 @@ SUBJECTS.investigacion2.exams.examen1 = {
   label: "Examen 1",
   questions: INV_EXAMEN1_QUESTIONS,
 };
+
+})();
