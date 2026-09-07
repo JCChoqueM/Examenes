@@ -2,7 +2,9 @@
 
 Plataforma web de **examen interactivo** para materias universitarias (modo Práctica, Examen y Repaso). Es estática y funciona abriendo `index.html` directamente en el navegador.
 
-> 📐 **Arquitectura:** cada materia vive en su **propia subcarpeta** dentro de `materias/`. Cada examen es un **archivo `.js` auto-contenido**: integra los metadatos de la materia (el antiguo `meta.js`) y las preguntas, y se autoregistra en `SUBJECTS`. En `index.html` hay **un `<script>` estático por examen** (cargado de forma sincrónica, por lo que abre sin problemas con `file://`, sin servidor ni comandos extra). Para añadir un examen: **crear el `.js` y agregar su `<script>` a `index.html`** — punto. No modificás `data.js` ni `logic.js`, ni corré comandos.
+> 📐 **Arquitectura:** cada materia vive en su **propia subcarpeta** dentro de `materias/`. Cada examen es un **archivo `.js` auto-contenido**: integra los metadatos de la materia (el antiguo `meta.js`) y las preguntas, y se autoregistra en `SUBJECTS`. En `index.html` hay **un `<script>` estático por examen** (sección sincrónica, por lo que abre sin problemas con `file://`, sin servidor ni comandos extra). Para añadir un examen: **crear el `.js` y agregar su `<script>` a `index.html`** — punto. No modificás `data.js` ni `logic.js`, ni corrés comandos.
+>
+> 📦 Estado actual: el proyecto incluye las materias **`ia`** y **`redes`**. Podés agregar tantas como necesites siguiendo la plantilla de abajo.
 
 ## Estructura del proyecto
 
@@ -10,154 +12,128 @@ Plataforma web de **examen interactivo** para materias universitarias (modo Prá
 examen/
 ├── index.html           # Página principal (data.js + un <script> por examen + logic.js)
 ├── style.css            # Estilos genéricos (no dependen de la materia)
-├── data.js              # Inicializa SUBJECTS = {} + estado global
-├── logic.js             # Lógica genérica: barra de materias, selector, filtros, renderizado
-└── materias/
+├── data.js              # Inicializa SUBJECTS = {} + estado global (no se toca)
+├── logic.js             # Lógica genérica: barra de materias, selector, filtros, renderizado (no se toca)
+└── materias/            # ← aquí van las materias (subcarpeta = clave de la materia)
     ├── ia/
     │   ├── parcial1.js  # auto-contenido: define materia + SUBJECTS.ia.exams.parcial1
     │   └── parcial2.js
-    ├── legislacion/
-    │   └── general.js
-    ├── lenguaje/
-    │   └── parcial1.js
-    ├── mate/
-    │   └── general.js
-    ├── redes/
-    │   ├── general.js
-    │   └── parcial3.js
-    └── trigonometria/
-        └── examenfinal.js
+    └── redes/
+        ├── general.js
+        └── parcial3.js
 ```
 
 ### ¿Cómo funciona?
 
 - **`data.js`** se carga **primero**. Inicializa `const SUBJECTS = {};` (vacío) y el estado global (`currentSubject`, `currentExam`, `mode`, `activeTema`, `userAnswers`, …). **No contiene preguntas.**
 - Cada **archivo de examen** (`materias/<materia>/<examen>.js`) es **auto-contenido**: define su materia dentro de `if (!SUBJECTS.<materia>)` (registro idempotente) y luego registra su examen con `SUBJECTS.<materia>.exams.<examen> = {...}`.
+- El cuerpo de cada examen va dentro de un **IIFE** `(function () { "use strict"; … })()`: las constantes de preguntas (`const …_QUESTIONS`) son **locales al archivo**, por lo que podés **copiar una materia reutilizando los mismos nombres de constantes** sin colisionar.
 - **`logic.js`** se carga **al final**. Como los `<script>` de los exámenes son sincrónicos y preceden al de `logic.js`, `SUBJECTS` ya está completo al iniciar. Es completamente genérico: **no hay que tocarlo** para añadir materias ni exámenes.
 
-> 🧠 El registro idempotente (`if (!SUBJECTS.<materia>)`) permite que varios exámenes de la **misma** materia coexistan: el primero define la materia y el resto sólo añaden su examen (sin borrar los anteriores). Cada archivo sigue siendo independiente y cargable por sí solo.
-
 ### Orden de carga en `index.html`
-
-`index.html` contiene estos `<script>` (el orden es el único detalle que importa):
 
 ```html
 <!-- 1) estado: SUBJECTS vacío -->
 <script src="data.js"></script>
-<!-- 2) exámenes (uno por archivo; el primero de cada materia define la materia) -->
+<!-- 2) exámenes (uno por archivo; el 1er examen de cada materia define la materia) -->
 <script src="materias/ia/parcial1.js"></script>
 <script src="materias/ia/parcial2.js"></script>
-<script src="materias/legislacion/general.js"></script>
-<script src="materias/lenguaje/parcial1.js"></script>
-<script src="materias/mate/general.js"></script>
 <script src="materias/redes/general.js"></script>
 <script src="materias/redes/parcial3.js"></script>
-<script src="materias/trigonometria/examenfinal.js"></script>
 <!-- 3) UI -->
 <script src="logic.js"></script>
 ```
 
-### Cómo añadir una nueva materia o un examen
+## Cómo añadir una nueva materia
 
-> ✅ **No corras comandos.** Solo: creá el `.js` auto-contenido y agregá su `<script>` en `index.html`.
+> ✅ No corras comandos. Solo: creá el `.js` siguiendo la plantilla y agregá su `<script>` en `index.html`.
 
 #### Paso 1 — Crear `materias/<materia>/<examen>.js`
 
-Un solo archivo con las preguntas **+** el metadato de la materia (registro idempotente) **+** el autoregistro del examen. Por ejemplo `materias/trigonometria/examenfinal.js`:
+Un solo archivo con las preguntas **+** el metadato de la materia (registro idempotente) **+** el autoregistro del examen. Reemplazá `<materia>`, `<examen>`, `<PREFIJO>` y los valores de ejemplo:
 
 ```js
-// ── EXAMEN: Examen Final — Trigonometría ──
-// AUTO-CONTENIDO: define la materia (si no existía) y registra este examen.
-// ── Cuerpo aislado (IIFE): las constantes son locales al archivo, por lo que
-//    podés reutilizar los mismos nombres (ej. *_QUESTIONS) al copiar una
-//    materia sin pegar colisiones de 'const' entre <script>.
+// ── EXAMEN: <Examen> — <Materia> ──
+// Archivo AUTOCONTENIDO: define la materia (si no existía) y registra este examen.
 (function () {
   "use strict";
 
-  const TRIG_EXAMENFINAL_QUESTIONS = [
+  const <PREFIJO>_<EXAM>_QUESTIONS = [
     {
-      "id": "trig1",
-      "tema": "TEMA I",
-      "seccion": "Conceptos Fundamentales",
-      "text": "¿Cuál es el valor de sen(90°)?",
-      "opts": ["0", "1", "√2 / 2", "No definido"],
-      "answer": 1
+      "id": "<mat1>",            // único (global)
+      "tema": "TEMA I",         // incluido en `temas`
+      "seccion": "<Sección>",   // incluido en `secciones` (o null si no hay filtro)
+      "text": "¿Pregunta?",
+      "opts": ["a", "b", "c", "d"], // EXACTAMENTE 4 strings
+      "answer": 0                            // índice 0..3 de la correcta
     }
     // ...más preguntas
   ];
 
   // ── Metadatos de la materia (auto-registro idempotente) ──
   // Meta integrado en este archivo: define la materia solo si aún no existe.
-  if (!SUBJECTS.trigonometria) {
-    SUBJECTS.trigonometria = {
-      key: 'trigonometria',
-      icon: "🔺",
-      label: "Trigonometría",
-      badge: "TRIG · CIENCIAS",
-      subtitle: "Examen Interactivo — Trigonometría: Conceptos, Identidades y Aplicaciones",
-      temas: ["TODOS", "TEMA I"],
-      temaLabels: { "TEMA I": "TEMA I: Trigonometría Básica, Identidades y Aplicaciones" },
-      secciones: ["TODAS", "Conceptos Fundamentales", "Identidades Trigonométricas", "Aplicaciones", "Resolución de Triángulos"],
+  if (!SUBJECTS.<materia>) {
+    SUBJECTS.<materia> = {
+      key: '<materia>',           // = nombre de la carpeta; selectSubject('<materia>')
+      icon: "💡",                // emoji del botón de la barra
+      label: "<Materia>",        // nombre visible
+      badge: "XXX · ÁREA",       // distintivo superior
+      subtitle: "Examen Interactivo — <Materia>: ...",
+      temas: ["TODOS", "TEMA I"],   // siempre empieza con 'TODOS'
+      temaLabels: { "TEMA I": "TEMA I: ..." },           // opcional
+      secciones: ["TODAS", "<Sección A>", "<Sección B>"], // opcional; null = sin filtro
       exams: {},
     };
   }
 
   // ── Registro del examen en SUBJECTS (auto-registro) ──
-  SUBJECTS.trigonometria.exams.examenfinal = {
-    key: 'examenfinal',
-    label: "Examen Final",
-    questions: TRIG_EXAMENFINAL_QUESTIONS,
+  SUBJECTS.<materia>.exams.<examen> = {
+    key: '<examen>',
+    label: "<Examen>",
+    questions: <PREFIJO>_<EXAM>_QUESTIONS,
   };
 })();
 ```
 
-**Reglas de formato de cada pregunta:**
+**Contrato rápido (lo mismo que aparece como comentario al inicio de cada `.js`):**
 
-| Campo | Requisito |
+| Elemento | Requisito clave |
 |---|---|
-| `id` | Único (prefijo de la materia + número, ej. `trig1`). |
-| `tema` | Debe estar en `temas` de la materia (ej. `'TEMA I'`). |
-| `seccion` | Debe estar en `secciones` (ej. `'Conceptos Fundamentales'`). |
-| `opts` | Array de **exactamente 4** strings. |
-| `answer` | **Índice** (0-3) de la opción correcta dentro de `opts`. |
+| `<materia>` | Nombre de la **carpeta** = la clave pasada a `selectSubject`. |
+| `key` | Igual al nombre de la carpeta. |
+| `temas` | Siempre empieza con `"TODOS"`. |
+| `secciones` | Siempre empieza con `"TODAS"`; pon `null` si no usás filtros por sección. |
+| `opts` | **Exactamente 4** strings. |
+| `answer` | Índice entero `0..3`. |
+| `id` | Único a nivel global. |
+| IIFE | Envuelve todo el cuerpo: constantes locales → podés copiar/reusar sin colisiones. |
 
-**Campos del registro `SUBJECTS.<clave>`:**
-
-| Campo | Descripción |
-|---|---|
-| `key` | Identificador único = **nombre de la carpeta** (`selectSubject('<key>')`). |
-| `icon` | Emoji del botón de la barra de materias. |
-| `label` | Nombre visible de la materia. |
-| `badge` | Texto del distintivo superior. |
-| `subtitle` | Subtítulo descriptivo. |
-| `temas` | Siempre empieza con `'TODOS'`. |
-| `temaLabels` | *(opcional)* Etiquetas amigables por tema. |
-| `secciones` | Siempre empieza con `'TODAS'`; `null` si no usa filtros por sección. |
-| `exams` | Catálogo de exámenes (se rellena con cada archivo de examen). |
-
-> 💡 Si la materia **no** usa filtros por sección, pon `secciones: null` (como hace `legislacion`).
+> 💡 Si la materia **no** usa filtros por sección, pon `secciones: null` (en cuyo caso el selector de secciones se oculta).
 
 #### Paso 2 — Agregar su `<script>` a `index.html`
 
 ```html
-<script src="materias/trigonometria/examenfinal.js"></script>
+<script src="materias/<materia>/<examen>.js"></script>
 ```
 
-> 📝 Para materias con varios exámenes, pon el que cree que será el "primero" antes que los demás (aunque el registro idempotente protege de errores, mantener el orden alfabético/tradicional ayuda a la legibilidad).
+> 📝 Si la materia tiene varios exámenes, pon el que defina la materia (`<examen>` 1) **antes** que los demás de la misma. El IIFE permite, además, reutilizar libremente los nombres de constantes (`*_QUESTIONS`) entre exámenes de distintas materias.
 
 #### Paso 3 — Abrir / recargar
 
-Abrí `index.html` (directo con doble-clic, sin servidor) y la nueva materia aparece en la barra con su selector de exámenes.
+Abrí `index.html` (doble-clic, sin servidor) y la nueva materia aparece en la barra con su selector de exámenes.
 
-## Herramientas de ayuda (opcional, no obligatorio)
+## Cómo añadir un examen a una materia EXISTENTE
 
-Validar la sintaxis de un examen o de todo el árbol (esto **no** es un paso obligatorio; sirve para chequear antes de abrir):
+Creás **un solo archivo** `materias/<materia>/<nuevo-examen>.js` (con su propio `if (!SUBJECTS.<materia>)` idempotente) y agregás su `<script>` en `index.html`. La materia ya está en la barra; el nuevo examen aparecerá en su selector. Ejemplo: añadir `parcial2.js` a `materias/ia/`.
+
+## Validación (opcional, no obligatorio)
 
 ```bash
-node --check materias/trigonometria/examenfinal.js       # un solo examen
+node --check materias/ia/parcial1.js        # sintaxis de un examen
+node --check data.js && node --check logic.js
 find . -name '*.js' -not -path './.git/*' | xargs -n1 node --check   # todo el proyecto
 ```
 
 ---
 
-¿Listo para añadir más exámenes? Creá `materias/<materia>/<examen>.js` (un solo archivo, auto-contenido), agregá su `<script>` en `index.html` y recargá ✨.
+¿Listo para añadir más exámenes? Creá `materias/<materia>/<examen>.js` (un solo archivo, auto-contenido, con su IIFE), agregá su `<script>` en `index.html` y recargá ✨. **No necesitás correr comandos ni generar bundles.**
