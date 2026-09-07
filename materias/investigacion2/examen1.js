@@ -32,7 +32,7 @@
 //      Regla: el primer examen de una materia va ANTES que los demás de la misma.
 //
 // ▸ 5) REGLAS DE ORO:
-//      - 'clave' de la materia = nombre de la carpeta (ej. 'investigacion').
+//      - 'clave' de la materia = nombre de la carpeta (ej. 'investigacion2').
 //      - temas siempre empieza con 'TODOS'; secciones empieza con 'TODAS' (o null).
 //      - Cada pregunta: opts.length === 4 y answer ∈ {0,1,2,3}.
 //      - ids únicos en TODOS los exámenes de TODAS las materias.
@@ -200,9 +200,9 @@ const INV_EXAMEN1_QUESTIONS = [
 
 // ── Metadatos de la materia (auto-registro idempotente) ──
 // Meta integrado en este archivo: define la materia solo si aún no existe.
-if (!SUBJECTS.investigacion) {
-  SUBJECTS.investigacion = {
-    key: 'investigacion',
+if (!SUBJECTS.investigacion2) {
+  SUBJECTS.investigacion2 = {
+    key: 'investigacion2',
     icon: "📊",
     label: "Investigación Operativa",
     badge: "INV · INGENIERÍA",
@@ -218,7 +218,7 @@ if (!SUBJECTS.investigacion) {
 }
 
 // ── Registro del examen en SUBJECTS (auto-registro) ──
-SUBJECTS.investigacion.exams.examen1 = {
+SUBJECTS.investigacion2.exams.examen1 = {
   key: 'examen1',
   label: "Examen 1",
   questions: INV_EXAMEN1_QUESTIONS,
