@@ -13,3 +13,10 @@ tools:
             - rm *
             - node *
             - cp *
+            - git *
+            - mkdir *
+            - sort
+            - printf *
+            - "true"
+            - command *
+            - tree *

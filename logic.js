@@ -1,3 +1,16 @@
+      // ── Helpers de datos (capa materia → examen → preguntas) ──
+      function activeExam() {
+        const subject = SUBJECTS[currentSubject];
+        return subject && subject.exams && currentExam
+          ? subject.exams[currentExam]
+          : null;
+      }
+
+      function getSubjectQuestions() {
+        const ex = activeExam();
+        return ex ? ex.questions : [];
+      }
+
       function buildMateriaBar() {
         const wrap = document.getElementById('materia-bar');
         wrap.innerHTML = Object.values(SUBJECTS)
@@ -10,19 +23,39 @@
           .join('');
       }
 
+      function buildExamBar() {
+        const wrap = document.getElementById('exam-bar');
+        const subject = SUBJECTS[currentSubject];
+        const exams = subject ? Object.values(subject.exams || {}) : [];
+        if (!exams.length) {
+          wrap.innerHTML = '';
+          wrap.style.display = 'none';
+          return;
+        }
+        wrap.style.display = 'flex';
+        wrap.innerHTML = exams
+          .map(
+            (e) =>
+              `<button class="exam-btn ${e.key === currentExam ? 'active' : ''}" onclick="selectExam('${e.key}')">
+                ${e.label || e.key}
+              </button>`,
+          )
+          .join('');
+      }
+
       function selectSubject(key) {
         if (!SUBJECTS[key]) return;
         currentSubject = key;
-        const subject = SUBJECTS[currentSubject];
-
+        currentExam = null;          // sin examen activo: se pide elegir uno
         activeTema = 'TODOS';
         activeSeccion = 'TODAS';
         userAnswers = {};
         examSubmitted = false;
-        currentQuestions = [...subject.questions];
+        currentQuestions = [];
         isInitialLoad = true;
         mode = 'practice';
 
+        const subject = SUBJECTS[currentSubject];
         document.getElementById('page-badge').textContent = subject.badge;
         document.getElementById('page-title').textContent = subject.label;
         document.getElementById('page-subtitle').textContent = subject.subtitle;
@@ -33,6 +66,31 @@
         if (firstModeBtn) firstModeBtn.classList.add('active');
 
         buildMateriaBar();
+        buildExamBar();
+        // Los filtros de tema/sección solo tienen sentido con un examen activo
+        document.getElementById('tema-filter').style.display = 'none';
+        document.getElementById('seccion-filter').style.display = 'none';
+        renderQuestions();          // empty-state: "elige un examen"
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function selectExam(key) {
+        const subject = SUBJECTS[currentSubject];
+        if (!subject || !subject.exams[key]) return;
+        currentExam = key;
+        const exam = subject.exams[key];
+        activeTema = 'TODOS';
+        activeSeccion = 'TODAS';
+        userAnswers = {};
+        examSubmitted = false;
+        currentQuestions = [...exam.questions];
+        isInitialLoad = true;
+        mode = 'practice';
+
+        document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'none';
+
+        buildExamBar();
         buildTemaFilter();
         buildSeccionFilter();
         renderQuestions();
@@ -72,7 +130,8 @@
         const subject = SUBJECTS[currentSubject];
         const temas = subject.temas;
         const labels = subject.temaLabels || {};
-        wrap.innerHTML = temas
+        wrap.style.display = temas ? 'flex' : 'none';
+        wrap.innerHTML = (temas || [])
           .map(
             (t) =>
               `<button class="tema-chip ${t === activeTema ? 'active' : ''}" onclick="filterTema('${t}')">${labels[t] || t}</button>`,
@@ -127,7 +186,7 @@
         examSubmitted = false;
         activeTema = 'TODOS';
         activeSeccion = 'TODAS';
-        currentQuestions = [...SUBJECTS[currentSubject].questions];
+        currentQuestions = [...getSubjectQuestions()];
         isInitialLoad = true;
         document.getElementById('result-panel').style.display = 'none';
         buildTemaFilter();
@@ -151,7 +210,10 @@
         updateStats(qs);
 
         if (qs.length === 0) {
-          wrap.innerHTML = '<div class="empty-state">No hay preguntas para este filtro.</div>';
+          const msg = currentExam
+            ? 'No hay preguntas para este filtro.'
+            : 'Selecciona un examen de la lista de arriba para comenzar.';
+          wrap.innerHTML = `<div class="empty-state">${msg}</div>`;
           return;
         }
 
@@ -248,8 +310,9 @@
       }
 
       function submitExam() {
-        examSubmitted = true;
         const qs = getVisibleQuestions();
+        if (qs.length === 0) return;            // no hay examen/preguntas visibles
+        examSubmitted = true;
         const answered = qs.filter((q) => userAnswers[q.id] !== undefined).length;
         const correct = qs.filter((q) => userAnswers[q.id] === q.answer).length;
         const wrong = answered - correct;

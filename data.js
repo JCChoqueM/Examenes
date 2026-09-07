@@ -1,44 +1,17 @@
       // ── REGISTRO DE MATERIAS (escalable a futuro) ──
-      const SUBJECTS = {
-        legislacion: {
-          key: 'legislacion',
-          icon: '⚖️',
-          label: 'Legislación Informática',
-          badge: 'ELT-001 · ELECTIVA I',
-          subtitle: 'Examen Interactivo — Universidad / Derecho Digital Bolivia',
-          temas: LEGISLACION_TEMAS,
-          secciones: null,
-          questions: LEGISLACION_QUESTIONS,
-        },
-        ia: {
-          key: 'ia',
-          icon: '🤖',
-          label: 'Inteligencia Artificial',
-          badge: 'IA · INGENIERÍA',
-          subtitle: 'Examen Interactivo — IA para Ingenieros: Primeros Pasos (UNIOR)',
-          temas: IA_TEMAS,
-          temaLabels: { 'TEMA I': 'TEMA I: IA para Ingenieros' },
-          secciones: IA_SECCIONES,
-          questions: IA_QUESTIONS,
-        },
-        redes: {
-          key: 'redes',
-          icon: '🌐',
-          label: 'Redes de Computadoras II',
-          badge: 'REDES · INFORMÁTICA',
-          subtitle: 'Examen Interactivo — Redes de Computadoras II: Conceptos Fundamentales',
-          temas: REDES_TEMAS,
-          temaLabels: { 'TEMA I': 'TEMA I: Redes de Computadoras II' },
-          secciones: REDES_SECCIONES,
-          questions: REDES_QUESTIONS,
-        },
-      };
+      // SUBJECTS se inicializa vacío aquí. Cada subcarpeta en `materias/`
+      // contiene un `meta.js` (metadatos + shell SUBJECTS.<key>) y uno o más
+      // archivos de examen (`parcial1.js`, `general.js`, …) que se auto-registran
+      // en `SUBJECTS.<key>.exams.<exam>`. Así, crear una materia o un examen solo
+      // requiere sus archivos .js (sin tocar data.js).
+      const SUBJECTS = {};
 
       let currentSubject = 'ia';
+      let currentExam = null;      // examen activo dentro de la materia (clave)
       let mode = 'practice';
       let activeTema = 'TODOS';
       let activeSeccion = 'TODAS';
       let userAnswers = {};
       let examSubmitted = false;
-      let currentQuestions = [...SUBJECTS[currentSubject].questions];
+      let currentQuestions = [];
       let isInitialLoad = true;

@@ -30,6 +30,9 @@
     <div class="materia-hint">Selecciona una materia</div>
     <div class="materia-bar" id="materia-bar"></div>
 
+    <div class="exam-hint">Selecciona un examen</div>
+    <div class="exam-bar" id="exam-bar"></div>
+
     <div class="mode-bar">
       <button
         class="mode-btn active"
@@ -200,10 +203,20 @@
       ↑ Inicio
     </button>
 
-    <script src="legislacion.js"></script>
-    <script src="ia.js"></script>
-    <script src="redes.js"></script>
+    <!-- data.js (raíz) inicializa SUBJECTS={} y el estado.
+         Cada materia en materias/<materia>/: meta.js define la materia y
+         los *.js de examen (parcial1.js, general.js, …) se auto-registran.
+         IMPORTANTE: meta.js ANTES de sus exámenes; logic.js al final. -->
     <script src="data.js"></script>
+    <script src="materias/legislacion/meta.js"></script>
+    <script src="materias/legislacion/general.js"></script>
+    <script src="materias/ia/meta.js"></script>
+    <script src="materias/ia/parcial1.js"></script>
+    <script src="materias/ia/parcial2.js"></script>
+    <script src="materias/redes/meta.js"></script>
+    <script src="materias/redes/general.js"></script>
+    <script src="materias/mate/meta.js"></script>
+    <script src="materias/mate/general.js"></script>
     <script src="logic.js"></script>
   </body>
 </html>
