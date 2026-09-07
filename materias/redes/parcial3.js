@@ -8,14 +8,14 @@
   const CONFIG = {
     subject_key: 'redes', // Nombre de la carpeta: /materias/redes/ | Usa en SUBJECTS[X].exams | IDs: ${charAt(0)}
     exam_key: 'parcial3', // Nombre del examen: SUBJECTS.redes.exams[X] | IDs: ${charAt(-1)} | Archivo: parcial3.js
-    icon: '🌐+++', // Emoji en selector de materia (visual)
-    label: 'Redes de Computadoras II+++', // Nombre completo en encabezado, selector, tab del browser
+    icon: '🌐', // Emoji en selector de materia (visual)
+    label: 'Redes de Computadoras II', // Nombre completo en encabezado, selector, tab del browser
     badge: 'REDES · INFORMÁTICA', // Clasificación debajo del label (ÁREA · CATEGORÍA)
-    subtitle: 'Examen Interactivo — Redes de Computadoras I++++I: Conceptos Fundamentales', // Descripción larga bajo el título
+    subtitle: 'Examen Interactivo — Redes de Computadoras II: Conceptos Fundamentales', // Descripción larga bajo el título
     temas: ['TODOS', 'TEMA I'], // Array de temas (filtro en dropdown) | SIEMPRE empieza con "TODOS"
     temaLabels: {
       // Nombres legibles de temas (tooltip al hover)
-      'TEMA I': 'TEMA I: Redes de Computadoras II++++', // Mapeo tema → descripción
+      'TEMA I': 'TEMA I: Redes de Computadoras II', // Mapeo tema → descripción
     },
     secciones: [
       // Array de subsecciones (filtro en dropdown) | SIEMPRE empieza con "TODAS"
