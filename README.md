@@ -2,145 +2,103 @@
 
 Plataforma web de **examen interactivo** para materias universitarias (modo Práctica, Examen y Repaso). Es estática y funciona abriendo `index.html` directamente en el navegador.
 
-> 📐 **Arquitectura:** cada materia vive en su **propia subcarpeta** dentro de `materias/`. Dentro hay un archivo `meta.js` (metadatos de la materia) y **uno o varios archivos de examen** (`parcial1.js`, `parcial2.js`, `general.js`, …). Al seleccionar una materia, la app muestra la lista de exámenes para elegir cuál responder. Nada de esto requiere tocar `data.js` ni `logic.js`.
+> 📐 **Arquitectura:** cada materia vive en su **propia subcarpeta** dentro de `materias/`. Cada examen es un **archivo `.js` auto-contenido**: integra los metadatos de la materia (el antiguo `meta.js`) y las preguntas, y se autoregistra en `SUBJECTS`. `materias/bundle.js` concatena todos esos archivos (generado por `tools/scan-materias.js`) y `index.html` los carga con **scripts estáticos**. Para añadir una materia o un examen solo creas **un archivo** y corres el escaneador; **no tocas `data.js`, `logic.js` ni `index.html`.
 
 ## Estructura del proyecto
 
 ```
 examen/
-├── index.html        # Página principal + etiquetas <script> (orden importante)
-├── style.css          # Estilos genéricos (no dependen de la materia)
-├── data.js            # Índice base: inicializa SUBJECTS = {} + estado global
-├── logic.js           # Lógica genérica: barra de materias, selector de exámenes, filtros, renderizado
-└── materias/          # ← una subcarpeta POR materia
+├── index.html           # Página principal + 3 <script> estáticos (data, bundle, logic)
+├── style.css            # Estilos genéricos (no dependen de la materia)
+├── data.js              # Índice base: inicializa SUBJECTS = {} + estado global
+├── logic.js             # Lógica genérica: barra de materias, selector, filtros, renderizado
+├── tools/
+│   └── scan-materias.js # genera materias/bundle.js (auto-generado)
+└── materias/
+    ├── bundle.js        # AUTOGENERADO — concat de todos los exámenes auto-contenidos
     ├── ia/
-    │   ├── meta.js          #   metadatos + SUBJECTS.ia = { ..., exams: {} }
-    │   ├── parcial1.js      #   examen: SUBJECTS.ia.exams.parcial1
-    │   └── parcial2.js      #   examen: SUBJECTS.ia.exams.parcial2
+    │   ├── parcial1.js  # auto-contenido: define materia + SUBJECTS.ia.exams.parcial1
+    │   └── parcial2.js
     ├── legislacion/
-    │   ├── meta.js
     │   └── general.js
-    ├── redes/
-    │   ├── meta.js
+    ├── lenguaje/
+    │   └── parcial1.js
+    ├── mate/
     │   └── general.js
-    └── mate/
-        ├── meta.js
-        └── general.js
+    └── redes/
+        ├── general.js
+        └── parcial3.js
 ```
 
 ### ¿Cómo funciona?
 
-- **`data.js`** se carga **primero**. Inicializa `const SUBJECTS = {};` (vacío) y el estado global
-  (`currentSubject`, `currentExam`, `mode`, `activeTema`, `userAnswers`, …). **No contiene preguntas.**
-  Es el "índice base".
-- **`materias/<materia>/meta.js`** define la materia: sus constantes de temas/secciones
-  (`XXX_TEMAS`, `XXX_SECCIONES`, `XXX_TEMA_LABELS`) y su entrada `SUBJECTS.<materia>` con un
-  catálogo `exams: {}` vacío. Se carga **antes** de los exámenes de esa materia.
-- **`materias/<materia>/<examen>.js`** contiene las preguntas del examen y se **auto-registra**
-  al final: `SUBJECTS.<materia>.exams.<examen> = { key, label, questions }`. El nombre del archivo
-  (ej. `parcial1.js`) es la **clave** del examen y se muestra como opción en el selector.
-- **`logic.js`** se carga **al final**. Al iniciar, llama a `selectSubject(currentSubject)` que
-  muestra la **barra de materias**; al elegir una materia, se muestra la **barra de exámenes**;
-  al elegir un examen, aparecen los filtros de tema/sección y las preguntas. Es completamente
-  genérico: **no hay que tocarlo** para añadir materias ni exámenes.
+- **`data.js`** se carga **primero**. Inicializa `const SUBJECTS = {};` (vacío) y el estado global (`currentSubject`, `currentExam`, `mode`, `activeTema`, `userAnswers`, …). **No contiene preguntas.**
+- **`materias/bundle.js`** (auto-generado por `tools/scan-materias.js`) concatena en orden todos los `materias/<materia>/<examen>.js`. Cada uno es **auto-contenido**: define su materia dentro de `if (!SUBJECTS.<materia>)` (registro idempotente) y luego registra su examen.
+- **`logic.js`** se carga **al final** y, como `bundle.js` es un `<script>` sincrónico que precede al suyo, `SUBJECTS` ya está completo al iniciar. Es completamente genérico: **no hay que tocarlo** para añadir materias ni exámenes.
+
+> 🧠 El registro idempotente (`if (!SUBJECTS.<materia>)`) permite que varios exámenes de la **misma** materia coexistan: el primero define la materia y el resto solo añaden su examen (sin borrar los anteriores). Cada archivo sigue siendo independiente y cargable por sí solo.
 
 ### Orden de carga en `index.html`
 
-El orden de las etiquetas `<script>` **importa**. Regla: *data.js primero*, *para cada materia
-meta.js antes que sus exámenes*, y *logic.js al final*:
+`index.html` sólo contiene **3 scripts estáticos** (el orden es el único que importa):
 
 ```html
-<script src="data.js"></script>
-<!-- Inteligencia Artificial -->
-<script src="materias/ia/meta.js"></script>
-<script src="materias/ia/parcial1.js"></script>
-<script src="materias/ia/parcial2.js"></script>
-<!-- Legislación Informática -->
-<script src="materias/legislacion/meta.js"></script>
-<script src="materias/legislacion/general.js"></script>
-<!-- Redes de Computadoras II -->
-<script src="materias/redes/meta.js"></script>
-<script src="materias/redes/general.js"></script>
-<!-- Matemáticas I -->
-<script src="materias/mate/meta.js"></script>
-<script src="materias/mate/general.js"></script>
-<script src="logic.js"></script>
+<script src="data.js"></script>            <!-- inicializa SUBJECTS -->
+<script src="materias/bundle.js"></script> <!-- todos los exámenes (auto-generado) -->
+<script src="logic.js"></script>           <!-- init y renderizado -->
 ```
+
+No necesitas añadir `<script>` por cada examen: `bundle.js` los incluye a todos.
 
 ## Cómo añadir una nueva materia
 
-> ✅ **No toques `data.js` ni `logic.js`.** Creato **una subcarpeta**
-> `materias/<materia>/` con un `meta.js` y al menos un archivo de examen, y registra los `<script>`
-> en `index.html`.
+> ✅ **No toques `data.js`, `logic.js` ni `index.html`.** Solo creas **un archivo** `materias/<materia>/<examen>.js` (auto-contenido) y regeneras el bundle.
 
-### Paso 1 — Crear `materias/<materia>/meta.js`
+### Paso 1 — Crear `materias/<materia>/<examen>.js`
 
-Define las constantes de temas/secciones y registra la materia en `SUBJECTS` con `exams: {}`:
+Un solo archivo con las preguntas **+** el metadato de la materia (registro idempotente) **+** el autoregistro del examen. Por ejemplo `materias/lenguaje/parcial1.js`:
 
 ```js
-// ── MATERIA: Matemáticas I (meta) ──
-const MATE_TEMAS = ["TODOS", "TEMA I"];
-const MATE_SECCIONES = ["TODAS", "Álgebra", "Cálculo", "Trigonometría"];
-const MATE_TEMA_LABELS = { "TEMA I": "TEMA I: Álgebra y Cálculo" };
-
-SUBJECTS.mate = {
-  key: 'mate',
-  icon: "📐",
-  label: "Matemáticas I",
-  badge: "MATE · CIENCIAS",
-  subtitle: "Examen Interactivo — Álgebra, Cálculo y Trigonometría I (UNIOR)",
-  temas: MATE_TEMAS,
-  temaLabels: MATE_TEMA_LABELS,
-  secciones: MATE_SECCIONES,
-  exams: {},
-};
-```
-
-> 💡 Si la materia **no** usa filtros por sección, pon `secciones: null` (como hace `legislacion`).
-
-**Campos del registro `SUBJECTS.<clave>`:**
-
-| Campo | Descripción |
-|---|---|
-| `key` | Identificador único = **nombre de la carpeta**. Se usa en `selectSubject('<key>')`. |
-| `icon` | Emoji del botón de la barra de materias. |
-| `label` | Nombre visible de la materia. |
-| `badge` | Texto del distintivo superior. |
-| `subtitle` | Subtítulo descriptivo. |
-| `temas` | Referencia a `XXX_TEMAS` (siempre empieza con `'TODOS'`). |
-| `temaLabels` | *(opcional)* Etiquetas amigables por tema. |
-| `secciones` | Referencia a `XXX_SECCIONES` (siempre empieza con `'TODAS'`); `null` si no aplica. |
-| `exams` | Catálogo de exámenes; se rellena con cada archivo de examen. |
-
-### Paso 2 — Crear el primer examen `materias/<materia>/<examen>.js`
-
-Copia el patrón. Las constantes llevan el prefijo de la materia. **Al final**, autoregistra el examen.
-El nombre del archivo (ej. `parcial1`) será la **clave** que se muestra en el selector de exámenes.
-
-```js
-// ── EXAMEN: Parcial 1 — Matemáticas I ──
-const MATE_PARCIAL1_QUESTIONS = [
+// ── EXAMEN: Parcial 1 — Lenguajes de Programación ──
+// Archivo AUTOCONTENIDO: define la materia (si no existía) y registra este examen.
+const LEN_PARCIAL1_QUESTIONS = [
   {
-    id: 'mate1',
-    tema: 'TEMA I',
-    seccion: 'Álgebra',
-    text: '¿Cuál es el valor de x en 2x + 3 = 7?',
-    opts: [
-      'x = 1',
-      'x = 2',            // ← respuesta correcta (índice 1)
-      'x = 3',
-      'x = 4',
+    "id": "len1",
+    "tema": "TEMA I",
+    "seccion": "¿Qué es un Lenguaje de Programación?",
+    "text": "¿Cuál es la definición más precisa de un lenguaje de programación?",
+    "opts": [
+      "Un conjunto de apps que se instalan en la computadora",
+      "Un conjunto de instrucciones y reglas para dar órdenes a una computadora y resolver un problema (ej: como escribir una receta paso a paso para que un robot cocine un plato específico)",
+      "Un idioma natural como el español, pero escrito más rápido",
+      "Un tipo de hardware especializado"
     ],
-    answer: 1,
+    "answer": 1
   },
   // ...más preguntas
 ];
 
+// ── Metadatos de la materia (auto-registro idempotente) ──
+// Meta integrado en este archivo: define la materia solo si aún no existe.
+if (!SUBJECTS.lenguaje) {
+  SUBJECTS.lenguaje = {
+    key: 'lenguaje',
+    icon: "💻",
+    label: "Lenguajes de Programación",
+    badge: "LENG · INFORMÁTICA",
+    subtitle: "Examen Interactivo — Lenguajes de Programación: Conceptos y Paradigmas",
+    temas: ["TODOS", "TEMA I"],
+    temaLabels: { "TEMA I": "TEMA I: Lenguajes de Programación" },
+    secciones: ["TODAS", "¿Qué es un Lenguaje de Programación?", "Paradigmas de Programación", "Lenguajes Funcionales", "Programación Orientada a Objetos", "Lenguajes de Scripting", "Compilación e Interpretación"],
+    exams: {},
+  };
+}
+
 // ── Registro del examen en SUBJECTS (auto-registro) ──
-SUBJECTS.mate.exams.parcial1 = {
+SUBJECTS.lenguaje.exams.parcial1 = {
   key: 'parcial1',
-  label: 'Parcial 1',
-  questions: MATE_PARCIAL1_QUESTIONS,
+  label: "Parcial 1",
+  questions: LEN_PARCIAL1_QUESTIONS,
 };
 ```
 
@@ -148,48 +106,61 @@ SUBJECTS.mate.exams.parcial1 = {
 
 | Campo | Requisito |
 |---|---|
-| `id` | Único (prefijo de la materia + número, ej. `mate1`). |
-| `tema` | Debe estar en `XXX_TEMAS` (ej. `'TEMA I'`). |
-| `seccion` | Debe estar en `XXX_SECCIONES` (ej. `'Álgebra'`). |
+| `id` | Único (prefijo de la materia + número, ej. `len1`). |
+| `tema` | Debe estar en `temas` de la materia (ej. `'TEMA I'`). |
+| `seccion` | Debe estar en `secciones` (ej. `'Álgebra'`). |
 | `opts` | Array de **exactamente 4** strings. |
 | `answer` | **Índice** (0-3) de la opción correcta dentro de `opts`. |
 
-> 💡 **Importante:** el registro `SUBJECTS.<m>.exams.<examen>` debe ir **después** de declarada
-> `XXX_<EXAM>_QUESTIONS`, ya que la referencia. Además, `meta.js` debe cargarse **antes** que
-> este archivo (para que `SUBJECTS.<m>.exams` exista).
+**Campos del registro `SUBJECTS.<clave>`:**
 
-### Paso 3 — Añadir los `<script>` en `index.html`
+| Campo | Descripción |
+|---|---|
+| `key` | Identificador único = **nombre de la carpeta** (`selectSubject('<key>')`). |
+| `icon` | Emoji del botón de la barra de materias. |
+| `label` | Nombre visible de la materia. |
+| `badge` | Texto del distintivo superior. |
+| `subtitle` | Subtítulo descriptivo. |
+| `temas` | Siempre empieza con `'TODOS'`. |
+| `temaLabels` | *(opcional)* Etiquetas amigables por tema. |
+| `secciones` | Siempre empieza con `'TODAS'`; `null` si no usa filtros por sección. |
+| `exams` | Catálogo de exámenes (se rellena con cada archivo de examen). |
 
-```html
-<script src="materias/mate/meta.js"></script>        <!-- ← antes de sus exámenes -->
-<script src="materias/mate/parcial1.js"></script>     <!-- ← el examen -->
-<script src="logic.js"></script>
+> 💡 Si la materia **no** usa filtros por sección, pon `secciones: null` (como hace `legislacion`).
+
+### Paso 2 — Regenerar el bundle
+
+```bash
+node tools/scan-materias.js
 ```
 
-> ⚠️ El `meta.js` de una materia debe ir **después de `data.js`** y **antes de sus archivos de examen**;
-> `logic.js` siempre va **al final**.
+El escananedor valida la sintaxis de cada `materias/*/*.js`, los ordena alfabéticamente y escribe `materias/bundle.js`. Es el **único paso necesario** después de crear o borrar un archivo de examen; `index.html` no cambia.
 
-### Paso 4 — Verificar
+### Paso 3 — Verificar
 
-Abre `index.html`, haz clic en 📐 Matemáticas I y verás el selector de exámenes con `Parcial 1`;
-al elegirlo aparecen las preguntas con los filtros de tema y sección.
+Abre `index.html`, haz clic en la nueva materia y verás el selector de exámenes; al elegir uno aparecen las preguntas con los filtros de tema y sección.
 
 ## Cómo añadir un examen a una materia EXISTENTE
 
-Solo creas **un archivo** `materias/<materia>/<nuevo-examen>.js` con las preguntas y el autoregistro,
-y añades su `<script>` (después del `meta.js` de esa materia). La materia ya está en la barra; el
-nuevo examen aparecerá automáticamente en su selector. Ejemplo: añadir `parcial2.js` a `materias/ia/`.
+Creas **un solo archivo** `materias/<materia>/<nuevo-examen>.js` (auto-contenido, con su propio `if (!SUBJECTS.<materia>)` idempotente) y regeneras el bundle:
+
+```bash
+node tools/scan-materias.js
+```
+
+La materia ya está en la barra; el nuevo examen aparecerá automáticamente en su selector. Ejemplo: añadir `parcial2.js` a `materias/ia/`.
 
 ## Herramientas de ayuda (opcional)
 
 ```bash
-node --check materias/mate/meta.js
-node --check materias/mate/parcial1.js
+node --check materias/lenguaje/parcial1.js   # valida sintaxis del examen
+node --check materias/bundle.js              # valida el bundle generado
 node --check data.js
 node --check logic.js
+node --check tools/scan-materias.js
+node tools/scan-materias.js                 # regenera materias/bundle.js
 ```
 
 ---
 
-¿Listo para añadir más exámenes? Crea `materias/<materia>/<examen>.js`, autoregistra en
-`SUBJECTS.<materia>.exams.<examen>` y añade la etiqueta `<script>` ✨.
+¿Listo para añadir más exámenes? Crea `materias/<materia>/<examen>.js` (un solo archivo, auto-contenido), autoregistra en `SUBJECTS.<materia>.exams.<examen>` y corre `node tools/scan-materias.js` ✨.

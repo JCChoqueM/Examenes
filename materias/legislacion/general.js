@@ -1,6 +1,9 @@
 // ── EXAMEN: General — Legislación Informática ──
-// Preguntas del examen "general".
-// Este archivo se carga DESPUÉS de meta.js y se autoregistra en SUBJECTS.
+// Archivo AUTOCONTENIDO: está integrado el meta de la materia, por lo que este
+// único .js define la materia (si no existía) y registra este examen en SUBJECTS.
+// Basta cargar este archivo (después de data.js) y la materia queda disponible.
+// Si la materia ya fue registrada por otro examen, el bloque del meta se omite
+// (registro idempotente) y aquí solo se agrega este examen.
 
 const LEGISLACION_GENERAL_QUESTIONS = [
   {
@@ -688,6 +691,29 @@ const LEGISLACION_GENERAL_QUESTIONS = [
     "answer": 2
   }
 ];
+
+// ── Metadatos de la materia (auto-registro idempotente) ──
+// Meta integrado en este archivo: define la materia solo si aún no existe.
+if (!SUBJECTS.legislacion) {
+  SUBJECTS.legislacion = {
+    "key": "legislacion",
+    "icon": "⚖️",
+    "label": "Legislación Informática",
+    "badge": "ELT-001 · ELECTIVA I",
+    "subtitle": "Examen Interactivo — Universidad / Derecho Digital Bolivia",
+    "temas": [
+      "TODOS",
+      "TEMA I",
+      "TEMA II",
+      "TEMA III",
+      "TEMA IV",
+      "TEMA V"
+    ],
+    "temaLabels": {},
+    "secciones": null,
+    "exams": {}
+  };
+}
 
 // ── Registro del examen en SUBJECTS (auto-registro) ──
 SUBJECTS.legislacion.exams.general = {

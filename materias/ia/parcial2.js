@@ -1,6 +1,9 @@
 // ── EXAMEN: Parcial 2 — Inteligencia Artificial ──
-// Preguntas del examen "parcial2".
-// Este archivo se carga DESPUÉS de meta.js y se autoregistra en SUBJECTS.
+// Archivo AUTOCONTENIDO: está integrado el meta de la materia, por lo que este
+// único .js define la materia (si no existía) y registra este examen en SUBJECTS.
+// Basta cargar este archivo (después de data.js) y la materia queda disponible.
+// Si la materia ya fue registrada por otro examen, el bloque del meta se omite
+// (registro idempotente) y aquí solo se agrega este examen.
 
 const IA_PARCIAL2_QUESTIONS = [
   {
@@ -186,6 +189,37 @@ const IA_PARCIAL2_QUESTIONS = [
     "answer": 1
   }
 ];
+
+// ── Metadatos de la materia (auto-registro idempotente) ──
+// Meta integrado en este archivo: define la materia solo si aún no existe.
+if (!SUBJECTS.ia) {
+  SUBJECTS.ia = {
+    "key": "ia",
+    "icon": "🤖",
+    "label": "Inteligencia Artificial",
+    "badge": "IA · INGENIERÍA",
+    "subtitle": "Examen Interactivo — IA para Ingenieros: Primeros Pasos (UNIOR)",
+    "temas": [
+      "TODOS",
+      "TEMA I"
+    ],
+    "temaLabels": {
+      "TEMA I": "TEMA I: IA para Ingenieros"
+    },
+    "secciones": [
+      "TODAS",
+      "¿Qué es la IA?",
+      "Aprendizaje Supervisado",
+      "Aprendizaje No Supervisado",
+      "Aprendizaje por Refuerzo",
+      "Redes Neuronales",
+      "Herramientas y Lenguajes",
+      "Proyecto y Preprocesamiento",
+      "Ética y Responsabilidad"
+    ],
+    "exams": {}
+  };
+}
 
 // ── Registro del examen en SUBJECTS (auto-registro) ──
 SUBJECTS.ia.exams.parcial2 = {

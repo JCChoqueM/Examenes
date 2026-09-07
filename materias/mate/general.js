@@ -1,6 +1,9 @@
 // ── EXAMEN: General — Matemáticas I ──
-// Preguntas del examen "general".
-// Este archivo se carga DESPUÉS de meta.js y se autoregistra en SUBJECTS.
+// Archivo AUTOCONTENIDO: está integrado el meta de la materia, por lo que este
+// único .js define la materia (si no existía) y registra este examen en SUBJECTS.
+// Basta cargar este archivo (después de data.js) y la materia queda disponible.
+// Si la materia ya fue registrada por otro examen, el bloque del meta se omite
+// (registro idempotente) y aquí solo se agrega este examen.
 
 const MATE_GENERAL_QUESTIONS = [
   {
@@ -82,6 +85,32 @@ const MATE_GENERAL_QUESTIONS = [
     "answer": 2
   }
 ];
+
+// ── Metadatos de la materia (auto-registro idempotente) ──
+// Meta integrado en este archivo: define la materia solo si aún no existe.
+if (!SUBJECTS.mate) {
+  SUBJECTS.mate = {
+    "key": "mate",
+    "icon": "📐",
+    "label": "Matemáticas I",
+    "badge": "MATE · CIENCIAS",
+    "subtitle": "Examen Interactivo — Álgebra, Cálculo y Trigonometría I (UNIOR)",
+    "temas": [
+      "TODOS",
+      "TEMA I"
+    ],
+    "temaLabels": {
+      "TEMA I": "TEMA I: Álgebra y Cálculo"
+    },
+    "secciones": [
+      "TODAS",
+      "Álgebra",
+      "Cálculo",
+      "Trigonometría"
+    ],
+    "exams": {}
+  };
+}
 
 // ── Registro del examen en SUBJECTS (auto-registro) ──
 SUBJECTS.mate.exams.general = {
