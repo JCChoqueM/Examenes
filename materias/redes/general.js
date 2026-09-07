@@ -1,377 +1,342 @@
-// ═══════════════════════════════════════════════════════════════════════════
-// 📋 CONTRATO — Archivo examen AUTO-CONTENIDO
-// Este .js se carga DESPUÉS de data.js (que define SUBJECTS={}) y ANTES de logic.js.
-// Para reutilizar este template, el archivo DEBE cumplir:
-//
-// ▸ 1) CONSTANTES DE PREGUNTAS:
-//      const <PREFIJO>_<EXAM>_QUESTIONS = [ {id,tema,seccion,text,opts,answer}, ... ]
-//      - id: string único (global) con prefijo de la materia (ej. 'inv1-1').
-//      - tema: valor incluido en temas de la materia (empieza por 'TODOS').
-//      - seccion: valor incluido en secciones (si no null; 'TODAS' es la de 'todos').
-//      - opts: array de EXACTAMENTE 4 strings.
-//      - answer: índice entero (0..3) dentro de opts de la opción correcta.
-//
-// ▸ 2) META DE LA MATERIA — Registro IDEMPOTENTE (solo se define si no existía):
-//      if (!SUBJECTS.<clave>) { SUBJECTS.<clave> = {
-//        key:'<clave>',        // = nombre de la carpeta; selectSubject('<clave>')
-//        icon:'<emoji>', label:'<Materia>', badge:'<BADGE · ÁREA>',
-//        subtitle:'...', temas:['TODOS',...], temaLabels:{},
-//        secciones:['TODAS', <sec1>, <sec2>, ...] | null,  // null = sin filtro de sección
-//        exams: {} }; }
-//      → El PRIMER examen de una materia define la materia; los siguientes
-//        omiten este bloque (no pisan los exámenes ya registrados).
-//
-// ▸ 3) REGISTRO DEL EXAMEN:
-//      SUBJECTS.<clave>.exams.<exam> = { key:'<exam>', label:'...', questions: <CONST>_QUESTIONS };
-//      <exam> es la clave usada por selectExam('<exam>').
-//
-// ▸ 4) CLAVES DE index.html (NO usar bundle ni comandos; son <script> estáticos sincrónicos):
-//      <script src='data.js'></script>
-//      <script src='materias/<materia>/<examen>.js'></script>  ← este archivo (y los demás exámenes)
-//      <script src='logic.js'></script>        ← siempre AL FINAL
-//      Regla: el primer examen de una materia va ANTES que los demás de la misma.
-//
-// ▸ 5) REGLAS DE ORO:
-//      - 'clave' de la materia = nombre de la carpeta (ej. 'investigacion').
-//      - temas siempre empieza con 'TODOS'; secciones empieza con 'TODAS' (o null).
-//      - Cada pregunta: opts.length === 4 y answer ∈ {0,1,2,3}.
-//      - ids únicos en TODOS los exámenes de TODAS las materias.
-// ═══════════════════════════════════════════════════════════════════════════
-// ── EXAMEN: General — Redes de Computadoras II ──
-// Archivo AUTOCONTENIDO: está integrado el meta de la materia, por lo que este
-// único .js define la materia (si no existía) y registra este examen en SUBJECTS.
-// Basta cargar este archivo (después de data.js) y la materia queda disponible.
-// Si la materia ya fue registrada por otro examen, el bloque del meta se omite
-// (registro idempotente) y aquí solo se agrega este examen.
+// ═════════════════════════════════════════════════════════════════════════════
+// 🎓 EXAMEN CON CONFIG COMENTADO (SIMPLE)
+// ═════════════════════════════════════════════════════════════════════════════
 
-// IIFE: cuerpo aislado — consts locales (reutilizable: se pueden reusar los mismos nombres de constante sin colisionar).
 (function () {
-"use strict";
-const REDES_GENERAL_QUESTIONS = [
-  {
-    "id": "redes1",
-    "tema": "TEMA I",
-    "seccion": "Modelo OSI",
-    "text": "¿Cuál es el propósito principal del Modelo OSI?",
-    "opts": [
-      "Hacer Internet más rápido",
-      "Organizar la comunicación en 7 capas para que diferentes tecnologías hablen el mismo idioma (ej: Ethernet y WiFi funcionen juntas)",
-      "Reemplazar protocolos antiguos",
-      "Proteger contra hackers"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes2",
-    "tema": "TEMA I",
-    "seccion": "Modelo OSI",
-    "text": "¿Qué capa del Modelo OSI maneja la transmisión física de bits?",
-    "opts": [
-      "Capa 2 (Enlace de Datos)",
-      "Capa 1 (Física): transmisión de bits, señales, cables, conectores (ej: tu cable Ethernet)",
-      "Capa 3 (Red)",
-      "Capa 4 (Transporte)"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes3",
-    "tema": "TEMA I",
-    "seccion": "Modelo OSI",
-    "text": "¿Cuál es la función de la Capa 4 (Transporte)?",
-    "opts": [
-      "Transmitir bits por cables",
-      "Determinar rutas entre redes",
-      "Garantizar entrega ordenada y completa usando TCP/UDP (ej: TCP para descargas, UDP para videojuegos en tiempo real)",
-      "Detectar colisiones en red"
-    ],
-    "answer": 2
-  },
-  {
-    "id": "redes4",
-    "tema": "TEMA I",
-    "seccion": "Modelo OSI",
-    "text": "¿Qué capa del OSI define cómo se ven los datos en la pantalla?",
-    "opts": [
-      "Capa 3 (Red)",
-      "Capa 4 (Transporte)",
-      "Capa 6 (Presentación): formato y cifrado de datos (ej: cómo se ve un PDF en tu navegador)",
-      "Capa 7 (Aplicación)"
-    ],
-    "answer": 2
-  },
-  {
-    "id": "redes5",
-    "tema": "TEMA I",
-    "seccion": "Capas 2 y 3",
-    "text": "¿Cuál es la función principal de un Switch?",
-    "opts": [
-      "Conectar redes diferentes a Internet",
-      "Aprender direcciones MAC y conmutar tramas dentro de una LAN local (ej: conectar tu PC con la impresora de oficina)",
-      "Traducir IPs a direcciones MAC",
-      "Encriptar datos entre edificios"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes6",
-    "tema": "TEMA I",
-    "seccion": "Capas 2 y 3",
-    "text": "¿Cuál es la función principal de un Router?",
-    "opts": [
-      "Conectar dispositivos en la misma red",
-      "Seleccionar rutas óptimas usando direcciones IP para conectar redes diferentes (ej: tu oficina con otra ciudad)",
-      "Amplificar señales WiFi",
-      "Almacenar direcciones MAC"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes7",
-    "tema": "TEMA I",
-    "seccion": "Capas 2 y 3",
-    "text": "¿Qué identifica un dispositivo en la Capa 2?",
-    "opts": [
-      "La dirección IP del dispositivo",
-      "La dirección MAC del dispositivo: formato físico de la tarjeta de red (ej: 00:1A:2B:3C:4D:5E)",
-      "El número de puerto del dispositivo",
-      "El nombre de host del dispositivo"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes8",
-    "tema": "TEMA I",
-    "seccion": "Capas 2 y 3",
-    "text": "¿Qué identifica un dispositivo en la Capa 3?",
-    "opts": [
-      "La dirección MAC física",
-      "La dirección IP lógica: identifica ubicación en la red (ej: 192.168.1.25)",
-      "El puerto del Switch",
-      "El nombre de la computadora"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes9",
-    "tema": "TEMA I",
-    "seccion": "Protocolos de Transporte",
-    "text": "¿Cuál es la característica principal de TCP?",
-    "opts": [
-      "Es muy rápido pero no garantiza entrega",
-      "Orientado a conexión, confiable, garantiza orden de entrega (ej: cuando descargas un archivo, cada bit debe llegar correcto)",
-      "No necesita establecer conexión previa",
-      "Se usa solo para juegos en línea"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes10",
-    "tema": "TEMA I",
-    "seccion": "Protocolos de Transporte",
-    "text": "¿Cuál es la característica principal de UDP?",
-    "opts": [
-      "Garantiza entrega de todos los paquetes",
-      "Sin conexión, no confiable, rápido (ej: videojuegos, videollamadas donde un paquete perdido no arruina todo)",
-      "Más seguro que TCP",
-      "Se usa solo para email"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes11",
-    "tema": "TEMA I",
-    "seccion": "Protocolos de Transporte",
-    "text": "¿Cuándo usarías TCP?",
-    "opts": [
-      "Para transmitir video en vivo",
-      "Para un videojuego competitivo",
-      "Para transferencia de archivos bancarios donde cada dato debe llegar perfecto (ej: descargar dinero de tu cuenta)",
-      "Para streaming de música"
-    ],
-    "answer": 2
-  },
-  {
-    "id": "redes12",
-    "tema": "TEMA I",
-    "seccion": "Protocolos de Transporte",
-    "text": "¿Cuándo usarías UDP?",
-    "opts": [
-      "Para transferir archivos críticos",
-      "Para videollamada en WhatsApp donde algunos frames perdidos no arruinan la comunicación (velocidad importa más que perfección)",
-      "Para transacciones de banco",
-      "Para email"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes13",
-    "tema": "TEMA I",
-    "seccion": "Direccionamiento IPv4",
-    "text": "¿Cuál es la estructura de una dirección IPv4?",
-    "opts": [
-      "Es un código hexadecimal de 48 bits",
-      "32 bits divididos en 4 octetos (ej: 192.168.1.25 donde cada número va de 0-255)",
-      "64 bits divididos en 8 secciones",
-      "Un código alfabético variable"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes14",
-    "tema": "TEMA I",
-    "seccion": "Direccionamiento IPv4",
-    "text": "¿Qué es la máscara de subred /24?",
-    "opts": [
-      "Un número aleatorio de seguridad",
-      "Define cuáles bits son RED (24 bits) y cuáles son HOST (8 bits), ej: 192.168.1.0/24 permite 254 dispositivos (de .1 a .254)",
-      "Un protocolo de encriptación",
-      "Una regla de firewall"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes15",
-    "tema": "TEMA I",
-    "seccion": "Direccionamiento IPv4",
-    "text": "¿Cuál es la dirección de RED en 192.168.1.25/24?",
-    "opts": [
-      "192.168.1.25",
-      "192.168.1.0 (todos los bits de host a 0)",
-      "192.168.1.254",
-      "192.168.0.0"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes16",
-    "tema": "TEMA I",
-    "seccion": "Direccionamiento IPv4",
-    "text": "¿Cuál es la dirección de BROADCAST en 192.168.1.0/24?",
-    "opts": [
-      "192.168.1.1",
-      "192.168.1.0",
-      "192.168.1.255 (todos los bits de host a 1, usada para hablar con TODOS simultáneamente)",
-      "192.168.2.0"
-    ],
-    "answer": 2
-  },
-  {
-    "id": "redes17",
-    "tema": "TEMA I",
-    "seccion": "Infraestructura",
-    "text": "¿En qué se diferencia conmutación local de enrutamiento global?",
-    "opts": [
-      "Son exactamente lo mismo",
-      "Conmutación local: tráfico dentro de la misma LAN usando direcciones físicas (MAC); Enrutamiento global: tráfico entre redes diferentes usando direcciones lógicas (IP)",
-      "El enrutamiento es más lento",
-      "La conmutación solo funciona en WiFi"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes18",
-    "tema": "TEMA I",
-    "seccion": "Infraestructura",
-    "text": "¿Qué es MPLS?",
-    "opts": [
-      "Un tipo de cable de red",
-      "Un protocolo que añade etiquetas a paquetes para enrutamiento ultra-rápido y garantizado en redes de operadores (ej: llamadas de video entre ciudades sin perder calidad)",
-      "Un estándar de WiFi",
-      "Un firewall de seguridad"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes19",
-    "tema": "TEMA I",
-    "seccion": "Arquitectura Moderna",
-    "text": "¿Qué diferencia hay entre MPLS y SD-WAN?",
-    "opts": [
-      "Son lo mismo",
-      "MPLS es hardware rígido y costoso; SD-WAN separa el \"cerebro\" (software) del \"músculo\" (infraestructura física), permitiendo controlar redes desde software de forma ágil y económica",
-      "SD-WAN es más lento",
-      "MPLS solo funciona en la nube"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes20",
-    "tema": "TEMA I",
-    "seccion": "Arquitectura Moderna",
-    "text": "¿Cuál es el concepto clave de SD-WAN?",
-    "opts": [
-      "Usar solo conexiones de cable",
-      "Separar el control (cerebro: decisiones de software) del plano de datos (músculo: donde viajan los datos), haciendo la red programable y centralizada",
-      "Eliminar completamente los routers",
-      "Reemplazar Internet con MPLS"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes21",
-    "tema": "TEMA I",
-    "seccion": "Arquitectura Moderna",
-    "text": "¿Cuál es una ventaja del enfoque SD-WAN?",
-    "opts": [
-      "Requiere más personal técnico",
-      "Conectar sucursales a la nube directamente sin pasar por el datacenter central, economizando costos y mejorando velocidad (ej: tu oficina en Quito accede a YouTube directo, no va a Madrid primero)",
-      "Aumenta el número de paquetes perdidos",
-      "Reduce la seguridad de los datos"
-    ],
-    "answer": 1
-  },
-  {
-    "id": "redes22",
-    "tema": "TEMA I",
-    "seccion": "Arquitectura Moderna",
-    "text": "¿Cuál es la diferencia entre Cisco Viptela y Fortinet FortiGate?",
-    "texto_2": "¿Qué es Fortinet FortiGate?",
-    "opts": [
-      "Cisco enfatiza conectividad escalable; Fortinet enfatiza seguridad unificada en el borde (ej: Cisco es mejor para multinacionales con muchas oficinas, Fortinet para quien quiere seguridad integrada en el firewall)",
-      "Son exactamente iguales",
-      "Fortinet solo funciona en la nube",
-      "Cisco solo para pequeñas empresas"
-    ],
-    "answer": 0
-  }
-];
+  'use strict';
 
-// ── Metadatos de la materia (auto-registro idempotente) ──
-// Meta integrado en este archivo: define la materia solo si aún no existe.
-if (!SUBJECTS.redes) {
-  SUBJECTS.redes = {
-    "key": "redes",
-    "icon": "🌐",
-    "label": "Redes de Computadoras II",
-    "badge": "REDES · INFORMÁTICA",
-    "subtitle": "Examen Interactivo — Redes de Computadoras II: Conceptos Fundamentales",
-    "temas": [
-      "TODOS",
-      "TEMA I"
-    ],
-    "temaLabels": {
-      "TEMA I": "TEMA I: Redes de Computadoras II"
+  const CONFIG = {
+    subject_key: 'redes', // Nombre de la carpeta: /materias/redes/ | Usa en SUBJECTS[X].exams | IDs: ${charAt(0)}
+    exam_key: 'general', // Nombre del examen: SUBJECTS.redes.exams[X] | IDs: ${charAt(-1)} | Archivo: general.js
+    icon: '🌐', // Emoji en selector de materia (visual)
+    label: 'Redes de Computadoras II', // Nombre completo en encabezado, selector, tab del browser
+    badge: 'REDES · INFORMÁTICA', // Clasificación debajo del label (ÁREA · CATEGORÍA)
+    subtitle: 'Examen Interactivo — Redes de Computadoras II: Conceptos Fundamentales', // Descripción larga bajo el título
+    temas: ['TODOS', 'TEMA I'], // Array de temas (filtro en dropdown) | SIEMPRE empieza con "TODOS"
+    temaLabels: {
+      // Nombres legibles de temas (tooltip al hover)
+      'TEMA I': 'TEMA : Redes de Computadoras II', // Mapeo tema → descripción
     },
-    "secciones": [
-      "TODAS",
-      "Modelo OSI",
-      "Capas 2 y 3",
-      "Protocolos de Transporte",
-      "Direccionamiento IPv4",
-      "Infraestructura",
-      "MPLS y SD-WAN",
-      "Arquitectura Moderna"
+    secciones: [
+      // Array de subsecciones (filtro en dropdown) | SIEMPRE empieza con "TODAS"
+      'TODAS', // Opción "mostrar todas"
+      'Modelo OSI', // Sección 1
+      'Capas 2 y 3', // Sección 2
+      'Protocolos de Transporte', // Sección 3
+      'Direccionamiento IPv4', // Sección 4
+      'Infraestructura', // Sección 5
+      'MPLS y SD-WAN', // Sección 6
+      'Arquitectura Moderna', // Sección 7
     ],
-    "exams": {}
+    exam_label: 'General', // Nombre del examen en selector de exámenes
   };
-}
 
-// ── Registro del examen en SUBJECTS (auto-registro) ──
-SUBJECTS.redes.exams.general = {
-  key: 'general',
-  label: "General",
-  questions: REDES_GENERAL_QUESTIONS,
-};
+  // ─────────────────────────────────────────────────────────────────────────
+  // PREGUNTAS (usa CONFIG para referencias, no hardcode)
+  // ─────────────────────────────────────────────────────────────────────────
+  const REDES_GENERAL_QUESTIONS = [
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-1`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[1],
+      text: '¿Cuál es el propósito principal del Modelo OSI?',
+      opts: [
+        'Hacer Internet más rápido',
+        'Organizar la comunicación en 7 capas para que diferentes tecnologías hablen el mismo idioma (ej: Ethernet y WiFi funcionen juntas)',
+        'Reemplazar protocolos antiguos',
+        'Proteger contra hackers',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-2`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[1],
+      text: '¿Qué capa del Modelo OSI maneja la transmisión física de bits?',
+      opts: [
+        'Capa 2 (Enlace de Datos)',
+        'Capa 1 (Física): transmisión de bits, señales, cables, conectores (ej: tu cable Ethernet)',
+        'Capa 3 (Red)',
+        'Capa 4 (Transporte)',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-3`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[1],
+      text: '¿Cuál es la función de la Capa 4 (Transporte)?',
+      opts: [
+        'Transmitir bits por cables',
+        'Determinar rutas entre redes',
+        'Garantizar entrega ordenada y completa usando TCP/UDP (ej: TCP para descargas, UDP para videojuegos en tiempo real)',
+        'Detectar colisiones en red',
+      ],
+      answer: 2,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-4`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[1],
+      text: '¿Qué capa del OSI define cómo se ven los datos en la pantalla?',
+      opts: [
+        'Capa 3 (Red)',
+        'Capa 4 (Transporte)',
+        'Capa 6 (Presentación): formato y cifrado de datos (ej: cómo se ve un PDF en tu navegador)',
+        'Capa 7 (Aplicación)',
+      ],
+      answer: 2,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-5`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[2],
+      text: '¿Cuál es la función principal de un Switch?',
+      opts: [
+        'Conectar redes diferentes a Internet',
+        'Aprender direcciones MAC y conmutar tramas dentro de una LAN local (ej: conectar tu PC con la impresora de oficina)',
+        'Traducir IPs a direcciones MAC',
+        'Encriptar datos entre edificios',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-6`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[2],
+      text: '¿Cuál es la función principal de un Router?',
+      opts: [
+        'Conectar dispositivos en la misma red',
+        'Seleccionar rutas óptimas usando direcciones IP para conectar redes diferentes (ej: tu oficina con otra ciudad)',
+        'Amplificar señales WiFi',
+        'Almacenar direcciones MAC',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-7`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[2],
+      text: '¿Qué identifica un dispositivo en la Capa 2?',
+      opts: [
+        'La dirección IP del dispositivo',
+        'La dirección MAC del dispositivo: formato físico de la tarjeta de red (ej: 00:1A:2B:3C:4D:5E)',
+        'El número de puerto del dispositivo',
+        'El nombre de host del dispositivo',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-8`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[2],
+      text: '¿Qué identifica un dispositivo en la Capa 3?',
+      opts: [
+        'La dirección MAC física',
+        'La dirección IP lógica: identifica ubicación en la red (ej: 192.168.1.25)',
+        'El puerto del Switch',
+        'El nombre de la computadora',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-9`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[3],
+      text: '¿Cuál es la característica principal de TCP?',
+      opts: [
+        'Es muy rápido pero no garantiza entrega',
+        'Orientado a conexión, confiable, garantiza orden de entrega (ej: cuando descargas un archivo, cada bit debe llegar correcto)',
+        'No necesita establecer conexión previa',
+        'Se usa solo para juegos en línea',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-10`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[3],
+      text: '¿Cuál es la característica principal de UDP?',
+      opts: [
+        'Garantiza entrega de todos los paquetes',
+        'Sin conexión, no confiable, rápido (ej: videojuegos, videollamadas donde un paquete perdido no arruina todo)',
+        'Más seguro que TCP',
+        'Se usa solo para email',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-11`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[3],
+      text: '¿Cuándo usarías TCP?',
+      opts: [
+        'Para transmitir video en vivo',
+        'Para un videojuego competitivo',
+        'Para transferencia de archivos bancarios donde cada dato debe llegar perfecto (ej: descargar dinero de tu cuenta)',
+        'Para streaming de música',
+      ],
+      answer: 2,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-12`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[3],
+      text: '¿Cuándo usarías UDP?',
+      opts: [
+        'Para transferir archivos críticos',
+        'Para videollamada en WhatsApp donde algunos frames perdidos no arruinan la comunicación (velocidad importa más que perfección)',
+        'Para transacciones de banco',
+        'Para email',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-13`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[4],
+      text: '¿Cuál es la estructura de una dirección IPv4?',
+      opts: [
+        'Es un código hexadecimal de 48 bits',
+        '32 bits divididos en 4 octetos (ej: 192.168.1.25 donde cada número va de 0-255)',
+        '64 bits divididos en 8 secciones',
+        'Un código alfabético variable',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-14`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[4],
+      text: '¿Qué es la máscara de subred /24?',
+      opts: [
+        'Un número aleatorio de seguridad',
+        'Define cuáles bits son RED (24 bits) y cuáles son HOST (8 bits), ej: 192.168.1.0/24 permite 254 dispositivos (de .1 a .254)',
+        'Un protocolo de encriptación',
+        'Una regla de firewall',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-15`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[4],
+      text: '¿Cuál es la dirección de RED en 192.168.1.25/24?',
+      opts: ['192.168.1.25', '192.168.1.0 (todos los bits de host a 0)', '192.168.1.254', '192.168.0.0'],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-16`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[4],
+      text: '¿Cuál es la dirección de BROADCAST en 192.168.1.0/24?',
+      opts: [
+        '192.168.1.1',
+        '192.168.1.0',
+        '192.168.1.255 (todos los bits de host a 1, usada para hablar con TODOS simultáneamente)',
+        '192.168.2.0',
+      ],
+      answer: 2,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-17`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[5],
+      text: '¿En qué se diferencia conmutación local de enrutamiento global?',
+      opts: [
+        'Son exactamente lo mismo',
+        'Conmutación local: tráfico dentro de la misma LAN usando direcciones físicas (MAC); Enrutamiento global: tráfico entre redes diferentes usando direcciones lógicas (IP)',
+        'El enrutamiento es más lento',
+        'La conmutación solo funciona en WiFi',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-18`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[5],
+      text: '¿Qué es MPLS?',
+      opts: [
+        'Un tipo de cable de red',
+        'Un protocolo que añade etiquetas a paquetes para enrutamiento ultra-rápido y garantizado en redes de operadores (ej: llamadas de video entre ciudades sin perder calidad)',
+        'Un estándar de WiFi',
+        'Un firewall de seguridad',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-19`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[7],
+      text: '¿Qué diferencia hay entre MPLS y SD-WAN?',
+      opts: [
+        'Son lo mismo',
+        'MPLS es hardware rígido y costoso; SD-WAN separa el "cerebro" (software) del "músculo" (infraestructura física), permitiendo controlar redes desde software de forma ágil y económica',
+        'SD-WAN es más lento',
+        'MPLS solo funciona en la nube',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-20`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[7],
+      text: '¿Cuál es el concepto clave de SD-WAN?',
+      opts: [
+        'Usar solo conexiones de cable',
+        'Separar el control (cerebro: decisiones de software) del plano de datos (músculo: donde viajan los datos), haciendo la red programable y centralizada',
+        'Eliminar completamente los routers',
+        'Reemplazar Internet con MPLS',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-21`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[7],
+      text: '¿Cuál es una ventaja del enfoque SD-WAN?',
+      opts: [
+        'Requiere más personal técnico',
+        'Conectar sucursales a la nube directamente sin pasar por el datacenter central, economizando costos y mejorando velocidad (ej: tu oficina en Quito accede a YouTube directo, no va a Madrid primero)',
+        'Aumenta el número de paquetes perdidos',
+        'Reduce la seguridad de los datos',
+      ],
+      answer: 1,
+    },
+    {
+      id: `${CONFIG.subject_key.charAt(0)}${CONFIG.exam_key.charAt(CONFIG.exam_key.length - 1)}-22`,
+      tema: CONFIG.temas[1],
+      seccion: CONFIG.secciones[7],
+      text: '¿Cuál es la diferencia entre Cisco Viptela y Fortinet FortiGate?',
+      opts: [
+        'Cisco enfatiza conectividad escalable; Fortinet enfatiza seguridad unificada en el borde (ej: Cisco es mejor para multinacionales con muchas oficinas, Fortinet para quien quiere seguridad integrada en el firewall)',
+        'Son exactamente iguales',
+        'Fortinet solo funciona en la nube',
+        'Cisco solo para pequeñas empresas',
+      ],
+      answer: 0,
+    },
+  ];
 
+  // Registro idempotente de materia
+  if (!SUBJECTS[CONFIG.subject_key]) {
+    SUBJECTS[CONFIG.subject_key] = {
+      key: CONFIG.subject_key,
+      icon: CONFIG.icon,
+      label: CONFIG.label,
+      badge: CONFIG.badge,
+      subtitle: CONFIG.subtitle,
+      temas: CONFIG.temas,
+      temaLabels: CONFIG.temaLabels,
+      secciones: CONFIG.secciones,
+      exams: {},
+    };
+  }
+
+  // Registro del examen
+  SUBJECTS[CONFIG.subject_key].exams[CONFIG.exam_key] = {
+    key: CONFIG.exam_key,
+    label: CONFIG.exam_label,
+    questions: REDES_GENERAL_QUESTIONS,
+  };
 })();
