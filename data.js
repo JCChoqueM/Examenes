@@ -9,7 +9,7 @@
 // index.html (sin tocar data.js ni logic.js).
 const SUBJECTS = {};
 
-let currentSubject = 'redes';
+let currentSubject = 'redes';  //carpeta de la materia
 let currentExam = null;      // examen activo dentro de la materia (clave) — lo gestiona logic.js en runtime
 let mode = 'practice';
 let activeTema = 'TODOS';
