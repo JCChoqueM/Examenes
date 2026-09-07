@@ -203,12 +203,23 @@
       ↑ Inicio
     </button>
 
-    <!-- data.js (raíz) inicializa SUBJECTS={} y el estado.
-         materias/bundle.js concatena TODOS los exámenes auto-contenidos
-         (generado por `node tools/scan-materias.js`).
-         Regla: data.js primero, bundle.js (materias) después, logic.js al final. -->
+    <!-- data.js (raíz) inicializa SUBJECTS={} y el estado global.
+         Luego van los archivos de examen auto-contenidos (uno <script> por
+         examen); cada uno define su materia con el registro idempotente
+         `if (!SUBJECTS.<key>)`. Por último logic.js (init sincrónico).
+         Orden: data.js primero; los <script> de exámenes en orden
+         alfabético (el primer examen de cada materia define la materia);
+         logic.js al final. Para añadir un examen: crear el .js y agregar
+         aquí su <script>. -->
     <script src="data.js"></script>
-    <script src="materias/bundle.js"></script>
+    <script src="materias/ia/parcial1.js"></script>
+    <script src="materias/ia/parcial2.js"></script>
+    <script src="materias/legislacion/general.js"></script>
+    <script src="materias/lenguaje/parcial1.js"></script>
+    <script src="materias/mate/general.js"></script>
+    <script src="materias/redes/general.js"></script>
+    <script src="materias/redes/parcial3.js"></script>
+    <script src="materias/trigonometria/examenfinal.js"></script>
     <script src="logic.js"></script>
   </body>
 </html>

@@ -2,10 +2,11 @@
       // SUBJECTS se inicializa vacío aquí. Cada examen .js en
       // `materias/<materia>/<examen>.js` es AUTO-CONTENIDO: integra su propio
       // meta (definición idempotente de SUBJECTS.<key>) y se autoregistra en
-      // `SUBJECTS.<key>.exams.<examen>`. `materias/bundle.js` concatena todos
-      // esos .js (generado por `tools/scan-materias.js`). Así, crear una materia
-      // o un examen solo requiere un archivo .js + correr el escaneador (sin
-      // tocar data.js ni index.html).
+      // `SUBJECTS.<key>.exams.<examen>`. Los .js de exámenes se cargan con
+      // <script> estáticos en index.html (uno por examen; el primero de cada
+      // materia define la materia y el resto sólo agregan su examen). Así,
+      // crear una materia/examen = crear el .js + agregar su <script> en
+      // index.html (sin tocar data.js ni logic.js).
       const SUBJECTS = {};
 
       let currentSubject = 'ia';
