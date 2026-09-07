@@ -20,3 +20,5 @@ tools:
             - "true"
             - command *
             - tree *
+            - cat *
+            - xargs *
